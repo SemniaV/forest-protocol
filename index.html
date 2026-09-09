@@ -7,7 +7,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Forest Protocol</title>
-  
   <style>
     :root{--bg:#0b0b0f;--card:#15151b;--soft:#20202a;--text:#f7f7fb;--muted:#a6a6b3;--ok:#59d98e;--bad:#ff6b6b;--accent:#ffd166;}
     *{box-sizing:border-box}
@@ -21,7 +20,7 @@
     .forest{font-size:72px;text-align:center;margin:8px 0 6px}.forest-photo{display:block;width:148px;height:148px;object-fit:cover;object-position:center 42%;border-radius:50%;margin:8px auto 14px;border:3px solid var(--accent);box-shadow:0 12px 35px rgba(0,0,0,.4)}.forest-photo.final{width:118px;height:118px;margin-top:14px}.badge{display:inline-block;padding:7px 10px;border-radius:999px;background:#22222c;color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.08em}
     .card{background:var(--card);border:1px solid #2b2b35;border-radius:20px;padding:16px;margin:14px 0}.quote{font-size:18px;line-height:1.5}
     button{width:100%;border:0;border-radius:16px;padding:15px 16px;font-size:16px;font-weight:750;background:var(--text);color:#111;margin-top:10px;cursor:pointer}.secondary{background:var(--soft);color:var(--text)}
-    .choices{display:grid;gap:10px;margin-top:14px}.choice{text-align:left;background:#1a1a22;color:var(--text);border:1px solid #30303b}.choice.correct{border-color:var(--ok)}.choice.wrong{border-color:var(--bad)}
+    .choices{display:grid;gap:10px;margin-top:14px}.choice{text-align:left;background:#1a1a22;color:var(--text);border:1px solid #30303b}.choice.correct{border-color:var(--ok)}.choice.wrong{border-color:var(--bad)}.choice.multi-selected{border-color:var(--accent);background:#2b2920;box-shadow:inset 0 0 0 1px var(--accent)}
     .status{padding:12px 14px;border-radius:14px;margin-top:14px;display:none}.status.show{display:block}.status.ok{background:rgba(89,217,142,.12);color:#bdf3d2}.status.bad{background:rgba(255,107,107,.12);color:#ffc8c8}
     .words{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.word{background:#1c1c24;border:1px solid #333340;border-radius:14px;padding:13px;text-align:center;font-weight:700}.word.selected{background:#343443;border-color:#77778d}
     .countdown{text-align:center;font-size:56px;font-weight:800;margin:18px 0 6px}.small{font-size:13px;color:var(--muted)}
@@ -46,14 +45,18 @@
   </section>
 
   <section class="screen" id="s1">
-    <span class="badge">1/3 · ΦΙΛΟΛΟΓΙΚΟΣ ΕΛΕΓΧΟΣ</span>
-    <h2>Μία μικρή ερώτηση.</h2>
-    <p>Ποια από τις παρακάτω προτάσεις είναι σωστή;</p>
-    <div class="choices">
-      <button class="choice" onclick="phil(false,this)">Εξ' αιτίας της βροχής, αργήσαμε.</button>
-      <button class="choice" onclick="phil(true,this)">Εξαιτίας της βροχής, αργήσαμε.</button>
-      <button class="choice" onclick="phil(false,this)">Εξ αιτίας της βροχής αργήσαμε.</button>
+    <span class="badge">1/3 · ΤΟ ΤΕΣΤ ΤΗΣ ΑΛΗΘΕΙΑΣ</span>
+    <h2>Ο Φόρεστ λέει:</h2>
+    <p>Ποια από τις παρακάτω δηλώσεις είναι <b>η πιο σωστή;</b></p>
+    <p class="small">Μπορείς να επιλέξεις από 1 έως 4 απαντήσεις.</p>
+    <div class="choices" id="truthChoices">
+      <button class="choice" onclick="toggleTruth(this,0)">1. Ο Φίλιππος τρελαίνεται για Doritos.</button>
+      <button class="choice" onclick="toggleTruth(this,1)">2. Η Ελένη μπορεί να πιει 3 Aperol σε 30 λεπτά.</button>
+      <button class="choice" onclick="toggleTruth(this,2)">3. Η Νικολέττα αγαπάει το τσίπουρο.</button>
+      <button class="choice" onclick="toggleTruth(this,3)">4. Η Σεμνιά πίνει Μάμος αντί για νερό.</button>
+      <button class="choice" onclick="toggleTruth(this,4)">5. Ο Φόρεστ χαίρεται που έχει τη Νικολέττα κηδεμόνα.</button>
     </div>
+    <button id="truthSubmit" onclick="checkTruth()">ΑΥΤΗ ΕΙΝΑΙ Η ΤΕΛΙΚΗ ΜΟΥ ΑΠΑΝΤΗΣΗ</button>
     <div id="philStatus" class="status"></div>
     <button id="philNext" style="display:none" onclick="go(2)">ΕΠΟΜΕΝΟ</button>
     <button id="philRetry" class="secondary" style="display:none" onclick="retryPhil()">ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ</button>
@@ -106,8 +109,56 @@
 <script>
   const screens=[...document.querySelectorAll('.screen')];
   function go(n){screens.forEach(s=>s.classList.remove('active'));document.getElementById('s'+n).classList.add('active');const p=Math.min(n,4);document.getElementById('stepLabel').textContent=`${p}/4`;document.getElementById('bar').style.width=(p/4*100)+'%';if(n===3) startDrinks();}
-  function phil(ok,btn){const st=document.getElementById('philStatus');document.querySelectorAll('#s1 .choice').forEach(b=>b.disabled=true);document.getElementById('philNext').style.display='none';document.getElementById('philRetry').style.display='none';if(ok){btn.classList.add('correct');st.className='status show ok';st.innerHTML='✅ ΕΝΤΑΞΕΙ.<br>Μπορείς να συνεχίσεις να δηλώνεις φιλόλογος.';document.getElementById('philNext').style.display='block';}else{btn.classList.add('wrong');st.className='status show bad';st.innerHTML='❌ ΛΑΘΟΣ.<br>Ο Φόρεστ προτείνει να μη μάθουν ποτέ οι μαθητές σου τι συνέβη εδώ.';document.getElementById('philRetry').style.display='block';}}
-  function retryPhil(){document.querySelectorAll('#s1 .choice').forEach(b=>{b.disabled=false;b.classList.remove('wrong','correct')});document.getElementById('philStatus').className='status';document.getElementById('philRetry').style.display='none';}
+  let truthSelected=[];
+  function toggleTruth(btn,index){
+    if(btn.disabled) return;
+    if(truthSelected.includes(index)){
+      truthSelected=truthSelected.filter(x=>x!==index);
+      btn.classList.remove('multi-selected');
+      return;
+    }
+    if(truthSelected.length>=4){
+      const st=document.getElementById('philStatus');
+      st.className='status show bad';
+      st.innerHTML='Μέχρι 4 είπα. 🐥<br><b>Διάβαζε προσεκτικά, φιλόλογος είσαι.</b>';
+      return;
+    }
+    truthSelected.push(index);
+    btn.classList.add('multi-selected');
+    document.getElementById('philStatus').className='status';
+  }
+  function checkTruth(){
+    const st=document.getElementById('philStatus');
+    if(truthSelected.length===0){
+      st.className='status show bad';
+      st.innerHTML='Διάλεξε τουλάχιστον μία απάντηση. Ο Φόρεστ δεν βαθμολογεί το κενό. 🐥';
+      return;
+    }
+    document.querySelectorAll('#s1 .choice').forEach(b=>b.disabled=true);
+    document.getElementById('truthSubmit').style.display='none';
+    document.getElementById('philNext').style.display='none';
+    document.getElementById('philRetry').style.display='none';
+    const correct=truthSelected.length===1 && truthSelected[0]===4;
+    if(correct){
+      document.querySelectorAll('#s1 .choice')[4].classList.add('correct');
+      st.className='status show ok';
+      st.innerHTML='✅ <b>ΕΠΙΤΕΛΟΥΣ.</b><br><br>Αυτή είναι η πιο σωστή απάντηση.<br><br>Μην ενθουσιάζεσαι βέβαια. Δεν είπα ότι <b>χαίρομαι και πάρα πολύ</b> που είσαι η κηδεμόνας μου.<br><br>Απλώς οι εναλλακτικές μου είναι περιορισμένες.<br><br>Με ένα πόδι, σε φιλοζωική πτηνών δεν πάω. <b>Θα με κοροϊδεύουν τα άλλα πουλάκια.</b><br><br>Οπότε… <b>σε κρατάω.</b><br><br>— Φόρεστ 🐥';
+      document.getElementById('philNext').style.display='block';
+    }else{
+      truthSelected.forEach(i=>document.querySelectorAll('#s1 .choice')[i].classList.add('wrong'));
+      st.className='status show bad';
+      st.innerHTML='❌ <b>ΛΑΘΟΣ.</b><br><br>Ναι. Είναι όλες αλήθεια.<br><br>Αλλά εγώ δεν σε ρώτησα ποιες είναι αληθινές.<br>Σε ρώτησα ποια είναι <b>Η ΠΙΟ ΣΩΣΤΗ</b>.<br><br>Νικολέττα… φιλόλογος είσαι.<br><b>Ξαναπροσπάθησε.</b><br><br>Και αυτή τη φορά θυμήσου κάτι σημαντικό:<br><br><b>Εδώ παίζεις με τους δικούς μου κανόνες.<br>Και το επίκεντρο είμαι ΕΓΩ.</b><br><br>— Φόρεστ 🐥';
+      document.getElementById('philRetry').style.display='block';
+    }
+  }
+  function retryPhil(){
+    truthSelected=[];
+    document.querySelectorAll('#s1 .choice').forEach(b=>{b.disabled=false;b.classList.remove('wrong','correct','multi-selected')});
+    document.getElementById('philStatus').className='status';
+    document.getElementById('philStatus').innerHTML='';
+    document.getElementById('philRetry').style.display='none';
+    document.getElementById('truthSubmit').style.display='block';
+  }
   const targetWords=['ΚΑΚΑΟ','ΒΙΒΛΙΟ','ΚΑΝΑΡΙΝΙ','ΘΑΛΑΣΣΑ','ΤΣΙΠΟΥΡΟ','ΚΛΕΙΔΙ','ΛΕΜΟΝΙ','ΠΑΡΑΘΥΡΟ'];
   const allWords=['ΚΑΦΕΣ','ΒΙΒΛΙΟ','ΚΑΚΑΟ','ΠΟΡΤΑ','ΤΣΙΠΟΥΡΟ','ΜΗΛΟ','ΘΑΛΑΣΣΑ','ΚΛΕΙΔΙ','ΣΚΥΛΟΣ','ΛΕΜΟΝΙ','ΚΑΝΑΡΙΝΙ','ΚΡΑΣΙ','ΠΑΡΑΘΥΡΟ','ΜΟΛΥΒΙ','ΜΠΥΡΑ','ΤΡΕΝΟ'];
   function startMemory(){document.getElementById('memoryStart').style.display='none';let t=10;document.getElementById('memoryStage').innerHTML=`<div class="countdown" id="memTimer">${t}</div><div class="words">${targetWords.map(w=>`<div class="word">${w}</div>`).join('')}</div>`;const int=setInterval(()=>{t--;document.getElementById('memTimer').textContent=t;if(t===0){clearInterval(int);memoryPick();}},1000)}
