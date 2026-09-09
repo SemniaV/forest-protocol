@@ -103,7 +103,13 @@
     <p>Μετά από εξονυχιστικό έλεγχο, ο Φόρεστ αποφάσισε ότι αξίζεις να είσαι η κηδεμόνας του για έναν ακόμη χρόνο.</p>
     <p><b>Στα 41 ξαναδίνεις.</b></p>
     <div class="card"><div class="small">ΚΩΔΙΚΟΣ ΛΟΥΚΕΤΟΥ</div><div class="code">7314</div></div>
-    <p>Πάρε τώρα τα AirPods σου. Και μην τα χρησιμοποιήσεις για να κάνεις ότι δεν ακούς όταν φωνάζω.</p>
+<p>
+  Πάρε τώρα τα AirPods σου. 🎧<br><br>
+  Και μην τα χρησιμοποιήσεις για να κάνεις ότι δεν ακούς όταν φωνάζω.<br><br>
+  <strong>Και όχι. Δεν είναι αυτά με το Noise Cancellation.</strong><br><br>
+  Δεν ήταν θέμα budget. Ήταν δική μου απαίτηση.<br><br>
+  — Φόρεστ 🐥
+</p>
     <p class="small">— Φόρεστ 🐥</p>
   </section>
   <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -168,8 +174,8 @@
     document.querySelectorAll('#s1 .choice').forEach(b=>{b.disabled=false;b.classList.remove('wrong','correct','multi-selected')});
     document.getElementById('truthSubmit').style.display='block';
   }
-  const targetWords=['ΚΑΚΑΟ','ΒΙΒΛΙΟ','ΚΑΝΑΡΙΝΙ','ΘΑΛΑΣΣΑ','ΤΣΙΠΟΥΡΟ','ΚΛΕΙΔΙ','ΛΕΜΟΝΙ','ΠΑΡΑΘΥΡΟ'];
-  const allWords=['ΚΑΦΕΣ','ΒΙΒΛΙΟ','ΚΑΚΑΟ','ΠΟΡΤΑ','ΤΣΙΠΟΥΡΟ','ΜΗΛΟ','ΘΑΛΑΣΣΑ','ΚΛΕΙΔΙ','ΣΚΥΛΟΣ','ΛΕΜΟΝΙ','ΚΑΝΑΡΙΝΙ','ΚΡΑΣΙ','ΠΑΡΑΘΥΡΟ','ΜΟΛΥΒΙ','ΜΠΥΡΑ','ΤΡΕΝΟ'];
+  const targetWords=['ΤΣΙΠΟΥΡΟ','ΜΙΚΙ','ΘΑΛΑΣΣΑ','ΜΟΛΥΒΙ','ΚΑΝΑΡΙΝΙ','ΑΜΦΙΘΕΑΤΡΟ','ΠΥΞΙΔΑ','ΒΕΡΑΝΤΑ'];
+  const allWords=['ΤΣΙΠΟΥΡΟ','ΠΑΡΑΛΙΑ','ΜΙΚΙ','ΣΤΥΛΟ','ΘΑΛΑΣΣΑ','ΠΑΠΑΓΑΛΟΣ','ΜΟΛΥΒΙ','ΧΑΡΤΗΣ','ΚΑΝΑΡΙΝΙ','ΜΠΑΛΚΟΝΙ','ΑΜΦΙΘΕΑΤΡΟ','ΠΥΞΙΔΑ','ΒΕΡΑΝΤΑ','ΚΡΑΣΙ','ΜΙΝΙ','ΘΕΑΤΡΟ'];
   function startMemory(){document.getElementById('memoryStart').style.display='none';let t=10;document.getElementById('memoryStage').innerHTML=`<div class="countdown" id="memTimer">${t}</div><div class="words">${targetWords.map(w=>`<div class="word">${w}</div>`).join('')}</div>`;const int=setInterval(()=>{t--;document.getElementById('memTimer').textContent=t;if(t===0){clearInterval(int);memoryPick();}},1000)}
   function memoryPick(){let sel=[];document.getElementById('memoryStage').innerHTML=`<p><b>Επίλεξε τις 8 λέξεις που είδες.</b></p><div class="words">${allWords.map(w=>`<button class="word" onclick="toggleWord(this,'${w}')">${w}</button>`).join('')}</div><button onclick="checkMemory()">ΕΛΕΓΧΟΣ</button>`;window.memSel=sel;}
   function toggleWord(el,w){window.memSel=window.memSel||[];if(window.memSel.includes(w)){window.memSel=window.memSel.filter(x=>x!==w);el.classList.remove('selected')}else if(window.memSel.length<8){window.memSel.push(w);el.classList.add('selected')}}
