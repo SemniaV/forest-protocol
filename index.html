@@ -89,9 +89,9 @@
     <h2>Μία τελευταία ερώτηση.</h2>
     <p><b>Πόσα πόδια χρειάζεται ο Φόρεστ;</b></p>
     <div class="choices">
-      <button class="choice" onclick="forestWrong()">0</button>
-      <button class="choice" onclick="forestWrong()">1</button>
-      <button class="choice" onclick="forestWrong()">2</button>
+      <button class="choice" onclick="forestWrong(0)">0</button>
+      <button class="choice" onclick="forestWrong(1)">1</button>
+      <button class="choice" onclick="forestWrong(2)">2</button>
       <button class="choice" onclick="forestCorrect(this)">ΟΣΑ ΕΧΕΙ ΕΝΑΣ ΘΡΥΛΟΣ</button>
     </div>
   </section>
@@ -229,8 +229,14 @@
     window.drinkInt=setInterval(()=>{t--;document.getElementById('drinkTimer').textContent=t;if(t<=0){clearInterval(window.drinkInt);[...grid.children].forEach(x=>x.style.pointerEvents='none');showModal('bad','Ο ΧΡΟΝΟΣ ΤΕΛΕΙΩΣΕ.','⏱️ Ο Φόρεστ αρνείται να πιστέψει ότι εσύ δεν βρήκες τα τσίπουρα.','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ',startDrinks)}},1000);
   }
 
-  function forestWrong(){
-    showModal('bad','ΛΑΘΟΣ.','Νικολέττα… Δεν σε ρώτησα πόσα <b>έχει</b>. Σε ρώτησα πόσα <b>χρειάζεται</b>.<br><br><b>Φιλόλογος είσαι.</b>','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
+  function forestWrong(answer){
+    if(answer===1){
+      showModal('bad','ΛΑΘΟΣ.','Νικολέττα… Δεν σε ρώτησα πόσα <b>έχει</b>.<br>Σε ρώτησα πόσα <b>χρειάζεται</b>.<br><br><b>Φιλόλογος είσαι.</b><br><br>— Φόρεστ 🐥','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
+    } else if(answer===0){
+      showModal('bad','ΣΥΓΓΝΩΜΗ;','<b>ΜΗΔΕΝ;</b><br><br>Έχω ήδη χάσει το ένα.<br><b>Θες να μου πάρεις και το άλλο;</b><br><br>Αρχίζω να αμφιβάλλω σοβαρά για την κηδεμονία μου.<br><br>— Φόρεστ 🐥','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
+    } else if(answer===2){
+      showModal('bad','ΔΥΟ;','Τι είμαι, πλούσιος;<br><br>Ένα έχω και κάνω μια χαρά τη δουλειά μου.<br><b>Δεν πετάμε λεφτά σε περιττά εξαρτήματα.</b><br><br>— Φόρεστ 🐥','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
+    }
   }
   function forestCorrect(btn){
     document.querySelectorAll('#s4 .choice').forEach(b=>b.disabled=true);
