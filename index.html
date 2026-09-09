@@ -28,6 +28,8 @@
     .code{font-size:44px;letter-spacing:.18em;text-align:center;font-weight:900;margin:20px 0;color:var(--accent)}
     .shake{animation:shake .3s}@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
     .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}.confetti span{position:absolute;top:-20px;font-size:24px;animation:fall 2.5s linear forwards}@keyframes fall{to{transform:translateY(820px) rotate(540deg);opacity:.9}}
+
+    .modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:22px;z-index:50}.modal-overlay.show{display:flex}.modal-card{width:100%;max-height:82%;overflow:auto;background:#17171e;border:1px solid #343440;border-radius:24px;padding:22px;box-shadow:0 28px 80px rgba(0,0,0,.55);animation:modalIn .22s ease}.modal-photo{width:76px;height:76px;border-radius:50%;object-fit:cover;object-position:center 42%;display:block;margin:-4px auto 12px;border:2px solid var(--accent)}.modal-title{text-align:center;font-size:24px;font-weight:850;margin:2px 0 12px}.modal-title.ok{color:var(--ok)}.modal-title.bad{color:var(--bad)}.modal-body{color:#e6e6ee;line-height:1.55;font-size:16px}.modal-body b{color:#fff}.modal-card button{margin-top:18px}@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
   </style>
 </head>
 <body>
@@ -57,9 +59,6 @@
       <button class="choice" onclick="toggleTruth(this,4)">5. Ο Φόρεστ χαίρεται που έχει τη Νικολέττα κηδεμόνα.</button>
     </div>
     <button id="truthSubmit" onclick="checkTruth()">ΑΥΤΗ ΕΙΝΑΙ Η ΤΕΛΙΚΗ ΜΟΥ ΑΠΑΝΤΗΣΗ</button>
-    <div id="philStatus" class="status"></div>
-    <button id="philNext" style="display:none" onclick="go(2)">ΕΠΟΜΕΝΟ</button>
-    <button id="philRetry" class="secondary" style="display:none" onclick="retryPhil()">ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ</button>
   </section>
 
   <section class="screen" id="s2">
@@ -76,7 +75,6 @@
     <p>Έχεις 10 δευτερόλεπτα. Ο Φόρεστ θεωρεί ότι αυτό θα σου φανεί ύποπτα εύκολο.</p>
     <div class="countdown" id="drinkTimer">10</div>
     <div class="drink-grid" id="drinkGrid"></div>
-    <div id="drinkStatus" class="status"></div>
   </section>
 
   <section class="screen" id="s4">
@@ -90,8 +88,6 @@
       <button class="choice" onclick="forestWrong()">2</button>
       <button class="choice" onclick="forestCorrect(this)">ΟΣΑ ΕΧΕΙ ΕΝΑΣ ΘΡΥΛΟΣ</button>
     </div>
-    <div id="forestStatus" class="status"></div>
-    <button id="forestNext" style="display:none" onclick="finishGame()">ΔΕΣ ΤΟΝ ΚΩΔΙΚΟ</button>
   </section>
 
   <section class="screen" id="s5">
@@ -104,10 +100,31 @@
     <p>Πάρε τώρα τα AirPods σου. Και μην τα χρησιμοποιήσεις για να κάνεις ότι δεν ακούς όταν φωνάζω.</p>
     <p class="small">— Φόρεστ 🐥</p>
   </section>
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <img class="modal-photo" src="forest.jpg" alt="Ο Φόρεστ">
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-body" id="modalBody"></div>
+      <button id="modalButton">ΣΥΝΕΧΕΙΑ</button>
+    </div>
+  </div>
   <div class="confetti" id="confetti"></div>
 </div>
 <script>
   const screens=[...document.querySelectorAll('.screen')];
+  function showModal(type,title,html,buttonLabel,onClick){
+    const overlay=document.getElementById('modalOverlay');
+    const titleEl=document.getElementById('modalTitle');
+    const body=document.getElementById('modalBody');
+    const btn=document.getElementById('modalButton');
+    titleEl.className='modal-title '+(type==='ok'?'ok':'bad');
+    titleEl.textContent=title;
+    body.innerHTML=html;
+    btn.textContent=buttonLabel;
+    btn.className=type==='ok'?'':'secondary';
+    btn.onclick=()=>{ overlay.classList.remove('show'); if(onClick) onClick(); };
+    overlay.classList.add('show');
+  }
   function go(n){screens.forEach(s=>s.classList.remove('active'));document.getElementById('s'+n).classList.add('active');const p=Math.min(n,4);document.getElementById('stepLabel').textContent=`${p}/4`;document.getElementById('bar').style.width=(p/4*100)+'%';if(n===3) startDrinks();}
   let truthSelected=[];
   function toggleTruth(btn,index){
@@ -118,58 +135,60 @@
       return;
     }
     if(truthSelected.length>=4){
-      const st=document.getElementById('philStatus');
-      st.className='status show bad';
-      st.innerHTML='Μέχρι 4 είπα. 🐥<br><b>Διάβαζε προσεκτικά, φιλόλογος είσαι.</b>';
+      showModal('bad','ΜΕΧΡΙ 4 ΕΙΠΑ.','Διάβαζε προσεκτικά, φιλόλογος είσαι. 🐥','ΕΝΤΑΞΕΙ');
       return;
     }
     truthSelected.push(index);
     btn.classList.add('multi-selected');
-    document.getElementById('philStatus').className='status';
   }
   function checkTruth(){
-    const st=document.getElementById('philStatus');
     if(truthSelected.length===0){
-      st.className='status show bad';
-      st.innerHTML='Διάλεξε τουλάχιστον μία απάντηση. Ο Φόρεστ δεν βαθμολογεί το κενό. 🐥';
+      showModal('bad','ΚΑΜΙΑ ΑΠΑΝΤΗΣΗ;','Διάλεξε τουλάχιστον μία απάντηση. Ο Φόρεστ δεν βαθμολογεί το κενό. 🐥','ΕΝΤΑΞΕΙ');
       return;
     }
     document.querySelectorAll('#s1 .choice').forEach(b=>b.disabled=true);
     document.getElementById('truthSubmit').style.display='none';
-    document.getElementById('philNext').style.display='none';
-    document.getElementById('philRetry').style.display='none';
     const correct=truthSelected.length===1 && truthSelected[0]===4;
     if(correct){
       document.querySelectorAll('#s1 .choice')[4].classList.add('correct');
-      st.className='status show ok';
-      st.innerHTML='✅ <b>ΕΠΙΤΕΛΟΥΣ.</b><br><br>Αυτή είναι η πιο σωστή απάντηση.<br><br>Μην ενθουσιάζεσαι βέβαια. Δεν είπα ότι <b>χαίρομαι και πάρα πολύ</b> που είσαι η κηδεμόνας μου.<br><br>Απλώς οι εναλλακτικές μου είναι περιορισμένες.<br><br>Με ένα πόδι, σε φιλοζωική πτηνών δεν πάω. <b>Θα με κοροϊδεύουν τα άλλα πουλάκια.</b><br><br>Οπότε… <b>σε κρατάω.</b><br><br>— Φόρεστ 🐥';
-      document.getElementById('philNext').style.display='block';
+      showModal('ok','ΕΠΙΤΕΛΟΥΣ.','Αυτή είναι η πιο σωστή απάντηση.<br><br>Μην ενθουσιάζεσαι βέβαια. Δεν είπα ότι <b>χαίρομαι και πάρα πολύ</b> που είσαι η κηδεμόνας μου.<br><br>Απλώς οι εναλλακτικές μου είναι περιορισμένες.<br><br>Με ένα πόδι, σε φιλοζωική πτηνών δεν πάω. <b>Θα με κοροϊδεύουν τα άλλα πουλάκια.</b><br><br>Οπότε… <b>σε κρατάω.</b><br><br>— Φόρεστ 🐥','ΕΠΟΜΕΝΟ',()=>go(2));
     }else{
       truthSelected.forEach(i=>document.querySelectorAll('#s1 .choice')[i].classList.add('wrong'));
-      st.className='status show bad';
-      st.innerHTML='❌ <b>ΛΑΘΟΣ.</b><br><br>Ναι. Είναι όλες αλήθεια.<br><br>Αλλά εγώ δεν σε ρώτησα ποιες είναι αληθινές.<br>Σε ρώτησα ποια είναι <b>Η ΠΙΟ ΣΩΣΤΗ</b>.<br><br>Νικολέττα… φιλόλογος είσαι.<br><b>Ξαναπροσπάθησε.</b><br><br>Και αυτή τη φορά θυμήσου κάτι σημαντικό:<br><br><b>Εδώ παίζεις με τους δικούς μου κανόνες.<br>Και το επίκεντρο είμαι ΕΓΩ.</b><br><br>— Φόρεστ 🐥';
-      document.getElementById('philRetry').style.display='block';
+      showModal('bad','ΛΑΘΟΣ.','Ναι. Είναι όλες αλήθεια.<br><br>Αλλά εγώ δεν σε ρώτησα ποιες είναι αληθινές.<br>Σε ρώτησα ποια είναι <b>Η ΠΙΟ ΣΩΣΤΗ</b>.<br><br>Νικολέττα… φιλόλογος είσαι.<br><b>Ξαναπροσπάθησε.</b><br><br>Και αυτή τη φορά θυμήσου κάτι σημαντικό:<br><br><b>Εδώ παίζεις με τους δικούς μου κανόνες.<br>Και το επίκεντρο είμαι ΕΓΩ.</b><br><br>— Φόρεστ 🐥','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ',retryPhil);
     }
   }
   function retryPhil(){
     truthSelected=[];
     document.querySelectorAll('#s1 .choice').forEach(b=>{b.disabled=false;b.classList.remove('wrong','correct','multi-selected')});
-    document.getElementById('philStatus').className='status';
-    document.getElementById('philStatus').innerHTML='';
-    document.getElementById('philRetry').style.display='none';
     document.getElementById('truthSubmit').style.display='block';
   }
   const targetWords=['ΚΑΚΑΟ','ΒΙΒΛΙΟ','ΚΑΝΑΡΙΝΙ','ΘΑΛΑΣΣΑ','ΤΣΙΠΟΥΡΟ','ΚΛΕΙΔΙ','ΛΕΜΟΝΙ','ΠΑΡΑΘΥΡΟ'];
   const allWords=['ΚΑΦΕΣ','ΒΙΒΛΙΟ','ΚΑΚΑΟ','ΠΟΡΤΑ','ΤΣΙΠΟΥΡΟ','ΜΗΛΟ','ΘΑΛΑΣΣΑ','ΚΛΕΙΔΙ','ΣΚΥΛΟΣ','ΛΕΜΟΝΙ','ΚΑΝΑΡΙΝΙ','ΚΡΑΣΙ','ΠΑΡΑΘΥΡΟ','ΜΟΛΥΒΙ','ΜΠΥΡΑ','ΤΡΕΝΟ'];
   function startMemory(){document.getElementById('memoryStart').style.display='none';let t=10;document.getElementById('memoryStage').innerHTML=`<div class="countdown" id="memTimer">${t}</div><div class="words">${targetWords.map(w=>`<div class="word">${w}</div>`).join('')}</div>`;const int=setInterval(()=>{t--;document.getElementById('memTimer').textContent=t;if(t===0){clearInterval(int);memoryPick();}},1000)}
-  function memoryPick(){let sel=[];document.getElementById('memoryStage').innerHTML=`<p><b>Επίλεξε τις 8 λέξεις που είδες.</b></p><div class="words">${allWords.map(w=>`<button class="word" onclick="toggleWord(this,'${w}')">${w}</button>`).join('')}</div><button onclick="checkMemory()">ΕΛΕΓΧΟΣ</button><div id="memStatus" class="status"></div>`;window.memSel=sel;}
+  function memoryPick(){let sel=[];document.getElementById('memoryStage').innerHTML=`<p><b>Επίλεξε τις 8 λέξεις που είδες.</b></p><div class="words">${allWords.map(w=>`<button class="word" onclick="toggleWord(this,'${w}')">${w}</button>`).join('')}</div><button onclick="checkMemory()">ΕΛΕΓΧΟΣ</button>`;window.memSel=sel;}
   function toggleWord(el,w){window.memSel=window.memSel||[];if(window.memSel.includes(w)){window.memSel=window.memSel.filter(x=>x!==w);el.classList.remove('selected')}else if(window.memSel.length<8){window.memSel.push(w);el.classList.add('selected')}}
-  function checkMemory(){const correct=window.memSel.filter(w=>targetWords.includes(w)).length;const st=document.getElementById('memStatus');const buttons=[...document.querySelectorAll('#memoryStage .word')];buttons.forEach(b=>b.disabled=true);if(correct>=6){st.className='status show ok';st.innerHTML=(correct===8 ? '🧠 8/8. Ο Φόρεστ είναι ενοχλητικά εντυπωσιασμένος.' : `🧠 ${correct}/8. Μνήμη: λειτουργική. Καλύτερα απ’ όσο περίμενε ο Φόρεστ.`)+`<button onclick="go(3)">ΕΠΟΜΕΝΟ</button>`;}else{st.className='status show bad';st.innerHTML=`🚨 ${correct}/8. Ανησυχητικό. Ο Φόρεστ αποδίδει το αποτέλεσμα στην ηλικία.<button class="secondary" onclick="restartMemory()">ΕΠΑΝΕΞΕΤΑΣΗ</button>`;}}
+  function checkMemory(){
+    const correct=window.memSel.filter(w=>targetWords.includes(w)).length;
+    const buttons=[...document.querySelectorAll('#memoryStage .word')];
+    buttons.forEach(b=>b.disabled=true);
+    if(correct>=6){
+      const msg=correct===8 ? '8/8. Ο Φόρεστ είναι ενοχλητικά εντυπωσιασμένος.' : `${correct}/8. Μνήμη: λειτουργική. Καλύτερα απ’ όσο περίμενε ο Φόρεστ.`;
+      showModal('ok','ΜΝΗΜΗ: ΛΕΙΤΟΥΡΓΙΚΗ','🧠 '+msg,'ΕΠΟΜΕΝΟ',()=>go(3));
+    }else{
+      showModal('bad','ΑΝΗΣΥΧΗΤΙΚΟ.',`🚨 ${correct}/8. Ο Φόρεστ αποδίδει το αποτέλεσμα στην ηλικία.`,'ΕΠΑΝΕΞΕΤΑΣΗ',restartMemory);
+    }
+  }
   function restartMemory(){document.getElementById('memoryStart').style.display='block';document.getElementById('memoryStart').textContent='ΕΠΑΝΕΞΕΤΑΣΗ';document.getElementById('memoryStage').innerHTML='';}
   const drinks=['🍷','☕️','🥛','🍶','🧃','🍺','🍶','🫖','🥤','🍶','☕️','🍷','🥛','🧃','🍶','🍺'];
-  function startDrinks(){const grid=document.getElementById('drinkGrid');grid.innerHTML='';const status=document.getElementById('drinkStatus');status.className='status';status.innerHTML='';let found=0;drinks.forEach((d,i)=>{const e=document.createElement('div');e.className='drink';e.textContent=d;e.onclick=()=>{if(d==='🍶'&&!e.classList.contains('selected')){e.classList.add('selected');found++;if(found===4){status.className='status show ok';status.innerHTML='🍶 4/4. Εντυπωσιακό. Χρειάστηκες λιγότερο χρόνο για να εντοπίσεις το τσίπουρο απ’ ό,τι για να θυμηθείς 8 λέξεις.<button onclick="go(4)">ΕΠΟΜΕΝΟ</button>';clearInterval(window.drinkInt);[...grid.children].forEach(x=>x.style.pointerEvents='none');}}else if(d!=='🍶'){e.classList.add('shake');setTimeout(()=>e.classList.remove('shake'),350)}};grid.appendChild(e)});let t=10;document.getElementById('drinkTimer').textContent=t;clearInterval(window.drinkInt);window.drinkInt=setInterval(()=>{t--;document.getElementById('drinkTimer').textContent=t;if(t<=0){clearInterval(window.drinkInt);status.className='status show bad';status.innerHTML='⏱️ Ο χρόνος τελείωσε. Ο Φόρεστ αρνείται να πιστέψει ότι εσύ δεν βρήκες το τσίπουρο.<button class="secondary" onclick="startDrinks()">ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ</button>';[...grid.children].forEach(x=>x.style.pointerEvents='none');}},1000)}
-  function forestWrong(){const st=document.getElementById('forestStatus');st.className='status show bad';st.innerHTML='❌ Νικολέττα… Δεν σε ρώτησα πόσα <b>έχει</b>. Σε ρώτησα πόσα <b>χρειάζεται</b>.<br><br><b>Φιλόλογος είσαι.</b>';document.getElementById('forestNext').style.display='none';}
-  function forestCorrect(btn){document.querySelectorAll('#s4 .choice').forEach(b=>b.disabled=true);btn.classList.add('correct');const st=document.getElementById('forestStatus');st.className='status show ok';st.innerHTML='✅ ΣΩΣΤΑ.<br>Ο Φόρεστ εγκρίνει την απάντηση.';document.getElementById('forestNext').style.display='block';}
+  function startDrinks(){const grid=document.getElementById('drinkGrid');grid.innerHTML='';let found=0;drinks.forEach((d,i)=>{const e=document.createElement('div');e.className='drink';e.textContent=d;e.onclick=()=>{if(d==='🍶'&&!e.classList.contains('selected')){e.classList.add('selected');found++;if(found===4){clearInterval(window.drinkInt);[...grid.children].forEach(x=>x.style.pointerEvents='none');showModal('ok','4/4. ΕΝΤΥΠΩΣΙΑΚΟ.','🍶 Χρειάστηκες λιγότερο χρόνο για να εντοπίσεις το τσίπουρο απ’ ό,τι για να θυμηθείς 8 λέξεις.','ΕΠΟΜΕΝΟ',()=>go(4));}}else if(d!=='🍶'){e.classList.add('shake');setTimeout(()=>e.classList.remove('shake'),350)}};grid.appendChild(e)});let t=10;document.getElementById('drinkTimer').textContent=t;clearInterval(window.drinkInt);window.drinkInt=setInterval(()=>{t--;document.getElementById('drinkTimer').textContent=t;if(t<=0){clearInterval(window.drinkInt);[...grid.children].forEach(x=>x.style.pointerEvents='none');showModal('bad','Ο ΧΡΟΝΟΣ ΤΕΛΕΙΩΣΕ.','⏱️ Ο Φόρεστ αρνείται να πιστέψει ότι εσύ δεν βρήκες το τσίπουρο.','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ',startDrinks);}},1000)}
+  function forestWrong(){
+    showModal('bad','ΛΑΘΟΣ.','Νικολέττα… Δεν σε ρώτησα πόσα <b>έχει</b>. Σε ρώτησα πόσα <b>χρειάζεται</b>.<br><br><b>Φιλόλογος είσαι.</b>','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
+  }
+  function forestCorrect(btn){
+    document.querySelectorAll('#s4 .choice').forEach(b=>b.disabled=true);
+    btn.classList.add('correct');
+    showModal('ok','ΣΩΣΤΑ.','Ο Φόρεστ εγκρίνει την απάντηση. 🐥','ΔΕΣ ΤΟΝ ΚΩΔΙΚΟ',finishGame);
+  }
   function finishGame(){go(5);document.getElementById('bar').style.width='100%';document.getElementById('stepLabel').textContent='4/4';const c=document.getElementById('confetti');for(let i=0;i<35;i++){const s=document.createElement('span');s.textContent=['🎉','✨','🍶','🐥'][Math.floor(Math.random()*4)];s.style.left=Math.random()*100+'%';s.style.animationDelay=Math.random()*.8+'s';c.appendChild(s)}if(navigator.vibrate) navigator.vibrate([100,60,120]);}
 </script>
 </body>
