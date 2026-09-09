@@ -24,7 +24,12 @@
     .status{padding:12px 14px;border-radius:14px;margin-top:14px;display:none}.status.show{display:block}.status.ok{background:rgba(89,217,142,.12);color:#bdf3d2}.status.bad{background:rgba(255,107,107,.12);color:#ffc8c8}
     .words{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.word{background:#1c1c24;border:1px solid #333340;border-radius:14px;padding:13px;text-align:center;font-weight:700}.word.selected{background:#343443;border-color:#77778d}
     .countdown{text-align:center;font-size:56px;font-weight:800;margin:18px 0 6px}.small{font-size:13px;color:var(--muted)}
-    .drink-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}.drink{aspect-ratio:1;background:#1a1a22;border:1px solid #30303b;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer}.drink.selected{outline:2px solid var(--accent);background:#2b2b25}
+    .drink-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:18px}
+.drink{aspect-ratio:1;background:#f5f3ed;border:1px solid #30303b;border-radius:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;padding:5px;transition:.18s transform,.18s outline}
+.drink img{width:100%;height:100%;object-fit:contain;border-radius:11px}
+.drink.selected{outline:3px solid var(--accent);transform:scale(.96)}
+.drink.selected::after{content:'✓';position:absolute;right:5px;top:5px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#111;color:#fff;font-weight:900}
+.drink .fallback{font-size:11px;font-weight:900;text-align:center;color:#151515;line-height:1.15}
     .code{font-size:44px;letter-spacing:.18em;text-align:center;font-weight:900;margin:20px 0;color:var(--accent)}
     .shake{animation:shake .3s}@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
     .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}.confetti span{position:absolute;top:-20px;font-size:24px;animation:fall 2.5s linear forwards}@keyframes fall{to{transform:translateY(820px) rotate(540deg);opacity:.9}}
@@ -73,6 +78,7 @@
     <span class="badge">3/3 · TSIPOURO DETECTOR</span>
     <h2>Βρες όλα τα τσίπουρα.</h2>
     <p>Έχεις 10 δευτερόλεπτα. Ο Φόρεστ θεωρεί ότι αυτό θα σου φανεί ύποπτα εύκολο.</p>
+    <p style="margin-bottom:6px"><b>Βρες και επίλεξε τα 4 τσίπουρα.</b><br><span class="muted">Ανάμεσα στα brands κρύβονται τέσσερα. Ο Φόρεστ θεωρεί τη δοκιμασία σκανδαλωδώς εύκολη για σένα.</span></p>
     <div class="countdown" id="drinkTimer">10</div>
     <div class="drink-grid" id="drinkGrid"></div>
   </section>
@@ -179,8 +185,53 @@
     }
   }
   function restartMemory(){document.getElementById('memoryStart').style.display='block';document.getElementById('memoryStart').textContent='ΕΠΑΝΕΞΕΤΑΣΗ';document.getElementById('memoryStage').innerHTML='';}
-  const drinks=['🍷','☕️','🥛','🍶','🧃','🍺','🍶','🫖','🥤','🍶','☕️','🍷','🥛','🧃','🍶','🍺'];
-  function startDrinks(){const grid=document.getElementById('drinkGrid');grid.innerHTML='';let found=0;drinks.forEach((d,i)=>{const e=document.createElement('div');e.className='drink';e.textContent=d;e.onclick=()=>{if(d==='🍶'&&!e.classList.contains('selected')){e.classList.add('selected');found++;if(found===4){clearInterval(window.drinkInt);[...grid.children].forEach(x=>x.style.pointerEvents='none');showModal('ok','4/4. ΕΝΤΥΠΩΣΙΑΚΟ.','🍶 Χρειάστηκες λιγότερο χρόνο για να εντοπίσεις το τσίπουρο απ’ ό,τι για να θυμηθείς 8 λέξεις.','ΕΠΟΜΕΝΟ',()=>go(4));}}else if(d!=='🍶'){e.classList.add('shake');setTimeout(()=>e.classList.remove('shake'),350)}};grid.appendChild(e)});let t=10;document.getElementById('drinkTimer').textContent=t;clearInterval(window.drinkInt);window.drinkInt=setInterval(()=>{t--;document.getElementById('drinkTimer').textContent=t;if(t<=0){clearInterval(window.drinkInt);[...grid.children].forEach(x=>x.style.pointerEvents='none');showModal('bad','Ο ΧΡΟΝΟΣ ΤΕΛΕΙΩΣΕ.','⏱️ Ο Φόρεστ αρνείται να πιστέψει ότι εσύ δεν βρήκες το τσίπουρο.','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ',startDrinks);}},1000)}
+
+  const drinks=[
+    {name:'Τσιλιλή',tsipouro:true,img:'https://www.kokospitta.gr/admin/files/4064.jpg'},
+    {name:'Δεκαράκι',tsipouro:true,img:'https://www.lifo.gr/sites/default/files/styles/main/public/articles/2020-10-29/dekaraki4_1.jpg?itok=hawwi8ru'},
+    {name:'Κατσαρός',tsipouro:true,img:'https://static.ab.gr/medias/sys_master/products/h9f/h16/10032640196638.jpg'},
+    {name:'Αποστολάκη',tsipouro:true,img:'https://pyrgos-kalamaria.gr/images/uploads/1_%284%29.jpg'},
+    {name:'Coca-Cola',tsipouro:false,img:'https://media.chevronextramile.com/uploads/2021/04/26095210/Coke_20oz.jpg'},
+    {name:'Fanta',tsipouro:false,img:'https://bikassfood.com/storage/2023/11/fanta-solo-selar.co-61b86417095db-removebg-preview-1.png'},
+    {name:'Sprite',tsipouro:false,img:'https://www.shopaholic.pk/cdn/shop/files/54491069_a1ngjpg241jpg241.jpg?v=1744243619'},
+    {name:'Aperol',tsipouro:false},
+    {name:'Μάμος',tsipouro:false},
+    {name:'Amita',tsipouro:false,img:'https://araxxon.com/cdn/shop/files/amita-orangenfruchtsaft-100-1l-681460.png?v=1750312064&width=370'},
+    {name:'Schweppes',tsipouro:false,img:'https://eurostarfl.com/cdn/shop/files/SCHWEPPESORANGE_png_1024x1024.webp?v=1755264249'},
+    {name:'Heineken',tsipouro:false},
+    {name:'Monster',tsipouro:false,img:'https://cdn.faire.com/fastly/ad4e32929cb5518ebc8c2fa95b30b0c6409d226bbcdfdf4db9cd5f55e6bf1471.webp?bg-color=FFFFFF&dpr=1&fit=crop&format=jpg&height=720&width=720'},
+    {name:'Νερό',tsipouro:false},
+    {name:'Κακάο',tsipouro:false},
+    {name:'Καφές',tsipouro:false}
+  ];
+  function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+  function fallbackTile(name){
+    const icons={'Νερό':'💧','Κακάο':'🥛','Καφές':'☕️','Aperol':'🍹','Μάμος':'🍺','Heineken':'🍺'};
+    return `<div class="fallback"><div style="font-size:26px;margin-bottom:5px">${icons[name]||'🥤'}</div>${name}</div>`;
+  }
+  function startDrinks(){
+    const grid=document.getElementById('drinkGrid'); grid.innerHTML=''; let found=0;
+    shuffle(drinks).forEach(d=>{
+      const e=document.createElement('div'); e.className='drink';
+      if(d.img){
+        const im=document.createElement('img'); im.src=d.img; im.alt=d.name;
+        im.onerror=()=>{e.innerHTML=fallbackTile(d.name)}; e.appendChild(im);
+      } else e.innerHTML=fallbackTile(d.name);
+      e.onclick=()=>{
+        if(d.tsipouro&&!e.classList.contains('selected')){
+          e.classList.add('selected'); found++;
+          if(found===4){
+            clearInterval(window.drinkInt); [...grid.children].forEach(x=>x.style.pointerEvents='none');
+            showModal('ok','4/4 — ΑΨΟΓΑ.','🍶 Εντυπωσιακό.<br><br>Ούτε ένα δευτερόλεπτο αμφιβολίας όταν πρόκειται για τσίπουρο.<br><br><b>Κάποια πράγματα δεν τα ξεχνάς ούτε στα 40.</b><br><br>— Φόρεστ 🐥','ΕΠΟΜΕΝΟ',()=>go(4));
+          }
+        } else if(!d.tsipouro){e.classList.add('shake');setTimeout(()=>e.classList.remove('shake'),350)}
+      };
+      grid.appendChild(e);
+    });
+    let t=10; document.getElementById('drinkTimer').textContent=t; clearInterval(window.drinkInt);
+    window.drinkInt=setInterval(()=>{t--;document.getElementById('drinkTimer').textContent=t;if(t<=0){clearInterval(window.drinkInt);[...grid.children].forEach(x=>x.style.pointerEvents='none');showModal('bad','Ο ΧΡΟΝΟΣ ΤΕΛΕΙΩΣΕ.','⏱️ Ο Φόρεστ αρνείται να πιστέψει ότι εσύ δεν βρήκες τα τσίπουρα.','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ',startDrinks)}},1000);
+  }
+
   function forestWrong(){
     showModal('bad','ΛΑΘΟΣ.','Νικολέττα… Δεν σε ρώτησα πόσα <b>έχει</b>. Σε ρώτησα πόσα <b>χρειάζεται</b>.<br><br><b>Φιλόλογος είσαι.</b>','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
   }
