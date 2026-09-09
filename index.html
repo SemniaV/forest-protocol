@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="el">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -8,247 +9,675 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Forest Protocol</title>
   <style>
-    :root{--bg:#0b0b0f;--card:#15151b;--soft:#20202a;--text:#f7f7fb;--muted:#a6a6b3;--ok:#59d98e;--bad:#ff6b6b;--accent:#ffd166;}
-    *{box-sizing:border-box}
-    body{margin:0;background:radial-gradient(circle at top,#20202a 0,#0b0b0f 42%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .app{width:min(100%,430px);min-height:760px;background:rgba(10,10,14,.88);border:1px solid #2b2b36;border-radius:30px;box-shadow:0 30px 80px rgba(0,0,0,.45);overflow:hidden;position:relative}
-    .top{padding:18px 22px 8px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
-    .progress{height:4px;background:#1e1e26}.progress>div{height:100%;width:0;background:var(--accent);transition:.4s}
-    .screen{padding:28px 24px 34px;display:none;animation:fade .25s ease}.screen.active{display:block}
-    @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-    h1{font-size:34px;line-height:1.02;margin:8px 0 16px}h2{font-size:26px;margin:4px 0 14px}p{line-height:1.5;color:#dedee7}
-    .forest{font-size:72px;text-align:center;margin:8px 0 6px}.forest-photo{display:block;width:148px;height:148px;object-fit:cover;object-position:center 42%;border-radius:50%;margin:8px auto 14px;border:3px solid var(--accent);box-shadow:0 12px 35px rgba(0,0,0,.4)}.forest-photo.final{width:118px;height:118px;margin-top:14px}.badge{display:inline-block;padding:7px 10px;border-radius:999px;background:#22222c;color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.08em}
-    .card{background:var(--card);border:1px solid #2b2b35;border-radius:20px;padding:16px;margin:14px 0}.quote{font-size:18px;line-height:1.5}
-    button{width:100%;border:0;border-radius:16px;padding:15px 16px;font-size:16px;font-weight:750;background:var(--text);color:#111;margin-top:10px;cursor:pointer}.secondary{background:var(--soft);color:var(--text)}
-    .choices{display:grid;gap:10px;margin-top:14px}.choice{text-align:left;background:#1a1a22;color:var(--text);border:1px solid #30303b}.choice.correct{border-color:var(--ok)}.choice.wrong{border-color:var(--bad)}.choice.multi-selected{border-color:var(--accent);background:#2b2920;box-shadow:inset 0 0 0 1px var(--accent)}
-    .status{padding:12px 14px;border-radius:14px;margin-top:14px;display:none}.status.show{display:block}.status.ok{background:rgba(89,217,142,.12);color:#bdf3d2}.status.bad{background:rgba(255,107,107,.12);color:#ffc8c8}
-    .words{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.word{background:#1c1c24;border:1px solid #333340;border-radius:14px;padding:13px;text-align:center;font-weight:700}.word.selected{background:#343443;border-color:#77778d}
-    .countdown{text-align:center;font-size:56px;font-weight:800;margin:18px 0 6px}.small{font-size:13px;color:var(--muted)}
-    .drink-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:18px}@media(max-width:430px){.drink-grid{grid-template-columns:repeat(3,1fr)}}
-.drink{aspect-ratio:1;background:#f5f3ed;border:1px solid #30303b;border-radius:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;padding:5px;transition:.18s transform,.18s outline}
-.drink img{width:100%;height:100%;object-fit:contain;border-radius:11px}
-.drink.selected{outline:3px solid var(--accent);transform:scale(.96)}
-.drink.selected::after{content:'✓';position:absolute;right:5px;top:5px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#111;color:#fff;font-weight:900}
-.drink .fallback{font-size:11px;font-weight:900;text-align:center;color:#151515;line-height:1.15}
-    .code{font-size:44px;letter-spacing:.18em;text-align:center;font-weight:900;margin:20px 0;color:var(--accent)}
-    .shake{animation:shake .3s}@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
-    .confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden}.confetti span{position:absolute;top:-20px;font-size:24px;animation:fall 2.5s linear forwards}@keyframes fall{to{transform:translateY(820px) rotate(540deg);opacity:.9}}
+    :root {
+      --bg: #0b0b0f;
+      --card: #15151b;
+      --soft: #20202a;
+      --text: #f7f7fb;
+      --muted: #a6a6b3;
+      --ok: #59d98e;
+      --bad: #ff6b6b;
+      --accent: #ffd166;
+    }
 
-    .modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:22px;z-index:50}.modal-overlay.show{display:flex}.modal-card{width:100%;max-height:82%;overflow:auto;background:#17171e;border:1px solid #343440;border-radius:24px;padding:22px;box-shadow:0 28px 80px rgba(0,0,0,.55);animation:modalIn .22s ease}.modal-photo{width:76px;height:76px;border-radius:50%;object-fit:cover;object-position:center 42%;display:block;margin:-4px auto 12px;border:2px solid var(--accent)}.modal-title{text-align:center;font-size:24px;font-weight:850;margin:2px 0 12px}.modal-title.ok{color:var(--ok)}.modal-title.bad{color:var(--bad)}.modal-body{color:#e6e6ee;line-height:1.55;font-size:16px}.modal-body b{color:#fff}.modal-card button{margin-top:18px}@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #20202a 0, #0b0b0f 42%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px
+    }
+
+    .app {
+      width: min(100%, 430px);
+      min-height: 760px;
+      background: rgba(10, 10, 14, .88);
+      border: 1px solid #2b2b36;
+      border-radius: 30px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, .45);
+      overflow: hidden;
+      position: relative
+    }
+
+    .top {
+      padding: 18px 22px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .progress {
+      height: 4px;
+      background: #1e1e26
+    }
+
+    .progress>div {
+      height: 100%;
+      width: 0;
+      background: var(--accent);
+      transition: .4s
+    }
+
+    .screen {
+      padding: 28px 24px 34px;
+      display: none;
+      animation: fade .25s ease
+    }
+
+    .screen.active {
+      display: block
+    }
+
+    @keyframes fade {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    h1 {
+      font-size: 34px;
+      line-height: 1.02;
+      margin: 8px 0 16px
+    }
+
+    h2 {
+      font-size: 26px;
+      margin: 4px 0 14px
+    }
+
+    p {
+      line-height: 1.5;
+      color: #dedee7
+    }
+
+    .forest {
+      font-size: 72px;
+      text-align: center;
+      margin: 8px 0 6px
+    }
+
+    .forest-photo {
+      display: block;
+      width: 148px;
+      height: 148px;
+      object-fit: cover;
+      object-position: center 42%;
+      border-radius: 50%;
+      margin: 8px auto 14px;
+      border: 3px solid var(--accent);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, .4)
+    }
+
+    .forest-photo.final {
+      width: 118px;
+      height: 118px;
+      margin-top: 14px
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #22222c;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid #2b2b35;
+      border-radius: 20px;
+      padding: 16px;
+      margin: 14px 0
+    }
+
+    .quote {
+      font-size: 18px;
+      line-height: 1.5
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 16px;
+      padding: 15px 16px;
+      font-size: 16px;
+      font-weight: 750;
+      background: var(--text);
+      color: #111;
+      margin-top: 10px;
+      cursor: pointer
+    }
+
+    .secondary {
+      background: var(--soft);
+      color: var(--text)
+    }
+
+    .choices {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px
+    }
+
+    .choice {
+      text-align: left;
+      background: #1a1a22;
+      color: var(--text);
+      border: 1px solid #30303b
+    }
+
+    .choice.correct {
+      border-color: var(--ok)
+    }
+
+    .choice.wrong {
+      border-color: var(--bad)
+    }
+
+    .choice.multi-selected {
+      border-color: var(--accent);
+      background: #2b2920;
+      box-shadow: inset 0 0 0 1px var(--accent)
+    }
+
+    .status {
+      padding: 12px 14px;
+      border-radius: 14px;
+      margin-top: 14px;
+      display: none
+    }
+
+    .status.show {
+      display: block
+    }
+
+    .status.ok {
+      background: rgba(89, 217, 142, .12);
+      color: #bdf3d2
+    }
+
+    .status.bad {
+      background: rgba(255, 107, 107, .12);
+      color: #ffc8c8
+    }
+
+    .words {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px
+    }
+
+    .word {
+      background: #1c1c24;
+      border: 1px solid #333340;
+      border-radius: 14px;
+      padding: 13px;
+      text-align: center;
+      font-weight: 700
+    }
+
+    .word.selected {
+      background: #343443;
+      border-color: #77778d
+    }
+
+    .countdown {
+      text-align: center;
+      font-size: 56px;
+      font-weight: 800;
+      margin: 18px 0 6px
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .drink-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 9px;
+      margin-top: 18px
+    }
+
+    @media(max-width:430px) {
+      .drink-grid {
+        grid-template-columns: repeat(3, 1fr)
+      }
+    }
+
+    .drink {
+      aspect-ratio: 1;
+      background: #f5f3ed;
+      border: 1px solid #30303b;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      padding: 5px;
+      transition: .18s transform, .18s outline
+    }
+
+    .drink img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 11px
+    }
+
+    .drink.selected {
+      outline: 3px solid var(--accent);
+      transform: scale(.96)
+    }
+
+    .drink.selected::after {
+      content: '✓';
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: #111;
+      color: #fff;
+      font-weight: 900
+    }
+
+    .drink .fallback {
+      font-size: 11px;
+      font-weight: 900;
+      text-align: center;
+      color: #151515;
+      line-height: 1.15
+    }
+
+    .code {
+      font-size: 44px;
+      letter-spacing: .18em;
+      text-align: center;
+      font-weight: 900;
+      margin: 20px 0;
+      color: var(--accent)
+    }
+
+    .shake {
+      animation: shake .3s
+    }
+
+    @keyframes shake {
+      25% {
+        transform: translateX(-5px)
+      }
+
+      50% {
+        transform: translateX(5px)
+      }
+
+      75% {
+        transform: translateX(-3px)
+      }
+    }
+
+    .confetti {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden
+    }
+
+    .confetti span {
+      position: absolute;
+      top: -20px;
+      font-size: 24px;
+      animation: fall 2.5s linear forwards
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(820px) rotate(540deg);
+        opacity: .9
+      }
+    }
+
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .72);
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      z-index: 50
+    }
+
+    .modal-overlay.show {
+      display: flex
+    }
+
+    .modal-card {
+      width: 100%;
+      max-height: 82%;
+      overflow: auto;
+      background: #17171e;
+      border: 1px solid #343440;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 28px 80px rgba(0, 0, 0, .55);
+      animation: modalIn .22s ease
+    }
+
+    .modal-photo {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center 42%;
+      display: block;
+      margin: -4px auto 12px;
+      border: 2px solid var(--accent)
+    }
+
+    .modal-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 850;
+      margin: 2px 0 12px
+    }
+
+    .modal-title.ok {
+      color: var(--ok)
+    }
+
+    .modal-title.bad {
+      color: var(--bad)
+    }
+
+    .modal-body {
+      color: #e6e6ee;
+      line-height: 1.55;
+      font-size: 16px
+    }
+
+    .modal-body b {
+      color: #fff
+    }
+
+    .modal-card button {
+      margin-top: 18px
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(.96) translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
   </style>
 </head>
+
 <body>
-<div class="app" id="app">
-  <div class="top"><span>FOREST PROTOCOL</span><span id="stepLabel">0/4</span></div>
-  <div class="progress"><div id="bar"></div></div>
-
-  <section class="screen active" id="s0">
-    <img class="forest-photo" src="forest.jpg" alt="Ο Φόρεστ"><span class="badge">SUBJECT IDENTIFIED</span>
-    <h1>Νικολέττα,<br>έφτασες τα 40.</h1>
-    <div class="card"><p><b>ΕΠΑΓΓΕΛΜΑ:</b> Φιλόλογος<br><b>ΚΑΦΕΣ:</b> ❌<br><b>ΚΑΚΑΟ:</b> ✅<br><b>ΤΣΙΠΟΥΡΟ:</b> ⚠️ υπερβολικός ενθουσιασμός<br><b>ΚΗΔΕΜΟΝΑΣ ΦΟΡΕΣΤ:</b> υπό επανεξέταση</p></div>
-    <p class="quote">«Σε παρακολουθώ εδώ και χρόνια. Σήμερα ήρθε η στιγμή να δω αν αξίζεις πραγματικά να είσαι η κηδεμόνας μου.»</p>
-    <p class="small">— Φόρεστ · 1 πόδι · 0 έλεος</p>
-    <button onclick="go(1)">ΑΠΟΔΕΧΟΜΑΙ ΤΗΝ ΑΞΙΟΛΟΓΗΣΗ</button>
-  </section>
-
-  <section class="screen" id="s1">
-    <span class="badge">1/3 · ΤΟ ΤΕΣΤ ΤΗΣ ΑΛΗΘΕΙΑΣ</span>
-    <h2>Ο Φόρεστ λέει:</h2>
-    <p>Ποια από τις παρακάτω δηλώσεις είναι <b>η πιο σωστή;</b></p>
-    <p class="small">Μπορείς να επιλέξεις από 1 έως 4 απαντήσεις.</p>
-    <div class="choices" id="truthChoices">
-      <button class="choice" onclick="toggleTruth(this,0)">1. Ο Φίλιππος τρελαίνεται για Doritos.</button>
-      <button class="choice" onclick="toggleTruth(this,1)">2. Η Ελένη μπορεί να πιει 3 Aperol σε 30 λεπτά.</button>
-      <button class="choice" onclick="toggleTruth(this,2)">3. Η Νικολέττα αγαπάει το τσίπουρο.</button>
-      <button class="choice" onclick="toggleTruth(this,3)">4. Η Σεμνιά πίνει Μάμος αντί για νερό.</button>
-      <button class="choice" onclick="toggleTruth(this,4)">5. Ο Φόρεστ χαίρεται που έχει τη Νικολέττα κηδεμόνα.</button>
+  <div class="app" id="app">
+    <div class="top"><span>FOREST PROTOCOL</span><span id="stepLabel">0/4</span></div>
+    <div class="progress">
+      <div id="bar"></div>
     </div>
-    <button id="truthSubmit" onclick="checkTruth()">ΑΥΤΗ ΕΙΝΑΙ Η ΤΕΛΙΚΗ ΜΟΥ ΑΠΑΝΤΗΣΗ</button>
-  </section>
 
-  <section class="screen" id="s2">
-    <span class="badge">2/3 · ΜΝΗΜΗ 40+</span>
-    <h2>Υποχρεωτικός έλεγχος μνήμης.</h2>
-    <p>Θα δεις 8 λέξεις για 10 δευτερόλεπτα. Μετά θα πρέπει να τις ξαναβρείς.</p>
-    <button id="memoryStart" onclick="startMemory()">ΕΙΜΑΙ ΕΤΟΙΜΗ</button>
-    <div id="memoryStage"></div>
-  </section>
+    <section class="screen active" id="s0">
+      <img class="forest-photo" src="forest.jpg" alt="Ο Φόρεστ"><span class="badge">SUBJECT IDENTIFIED</span>
+      <h1>Νικολέττα,<br>έφτασες τα 40.</h1>
+      <div class="card">
+        <p><b>ΕΠΑΓΓΕΛΜΑ:</b> Φιλόλογος<br><b>ΚΑΦΕΣ:</b> ❌<br><b>ΚΑΚΑΟ:</b> ✅<br><b>ΤΣΙΠΟΥΡΟ:</b> ⚠️ υπερβολικός
+          ενθουσιασμός<br><b>ΚΗΔΕΜΟΝΑΣ ΦΟΡΕΣΤ:</b> υπό επανεξέταση</p>
+      </div>
+      <p class="quote">«Σε παρακολουθώ εδώ και χρόνια. Σήμερα ήρθε η στιγμή να δω αν αξίζεις πραγματικά να είσαι η
+        κηδεμόνας μου.»</p>
+      <p class="small">— Φόρεστ · 1 πόδι · 0 έλεος</p>
+      <button onclick="go(1)">ΑΠΟΔΕΧΟΜΑΙ ΤΗΝ ΑΞΙΟΛΟΓΗΣΗ</button>
+    </section>
 
-  <section class="screen" id="s3">
-    <span class="badge">3/3 · TSIPOURO DETECTOR</span>
-    <h2>Βρες όλα τα τσίπουρα.</h2>
-    <p>Έχεις 10 δευτερόλεπτα. Ο Φόρεστ θεωρεί ότι αυτό θα σου φανεί ύποπτα εύκολο.</p>
-    <p style="margin-bottom:6px"><b>Βρες και επίλεξε τα 4 τσίπουρα.</b><br><span class="muted">Ανάμεσα στα προϊόντα κρύβονται τέσσερα. Ο Φόρεστ θεωρεί τη δοκιμασία σκανδαλωδώς εύκολη για σένα.</span></p>
-    <div class="countdown" id="drinkTimer">10</div>
-    <div class="drink-grid" id="drinkGrid"></div>
-  </section>
+    <section class="screen" id="s1">
+      <span class="badge">1/3 · ΤΟ ΤΕΣΤ ΤΗΣ ΑΛΗΘΕΙΑΣ</span>
+      <h2>Ο Φόρεστ λέει:</h2>
+      <p>Ποια από τις παρακάτω δηλώσεις είναι <b>η πιο σωστή;</b></p>
+      <p class="small">Μπορείς να επιλέξεις από 1 έως 4 απαντήσεις.</p>
+      <div class="choices" id="truthChoices">
+        <button class="choice" onclick="toggleTruth(this,0)">1. Ο Φίλιππος τρελαίνεται για Doritos.</button>
+        <button class="choice" onclick="toggleTruth(this,1)">2. Η Ελένη μπορεί να πιει 3 Aperol σε 30 λεπτά.</button>
+        <button class="choice" onclick="toggleTruth(this,2)">3. Η Νικολέττα αγαπάει το τσίπουρο.</button>
+        <button class="choice" onclick="toggleTruth(this,3)">4. Η Σεμνιά πίνει Μάμος αντί για νερό.</button>
+        <button class="choice" onclick="toggleTruth(this,4)">5. Ο Φόρεστ χαίρεται που έχει τη Νικολέττα
+          κηδεμόνα.</button>
+      </div>
+      <button id="truthSubmit" onclick="checkTruth()">ΑΥΤΗ ΕΙΝΑΙ Η ΤΕΛΙΚΗ ΜΟΥ ΑΠΑΝΤΗΣΗ</button>
+    </section>
 
-  <section class="screen" id="s4">
-    <span class="badge">FINAL CHECK</span>
-    <img class="forest-photo final" src="forest.jpg" alt="Ο Φόρεστ">
-    <h2>Μία τελευταία ερώτηση.</h2>
-    <p><b>Πόσα πόδια χρειάζεται ο Φόρεστ;</b></p>
-    <div class="choices">
-      <button class="choice" onclick="forestWrong(0)">0</button>
-      <button class="choice" onclick="forestWrong(1)">1</button>
-      <button class="choice" onclick="forestWrong(2)">2</button>
-      <button class="choice" onclick="forestCorrect(this)">ΟΣΑ ΕΧΕΙ ΕΝΑΣ ΘΡΥΛΟΣ</button>
+    <section class="screen" id="s2">
+      <span class="badge">2/3 · ΜΝΗΜΗ 40+</span>
+      <h2>Υποχρεωτικός έλεγχος μνήμης.</h2>
+      <p>Θα δεις 8 λέξεις για 10 δευτερόλεπτα. Μετά θα πρέπει να τις ξαναβρείς.</p>
+      <button id="memoryStart" onclick="startMemory()">ΕΙΜΑΙ ΕΤΟΙΜΗ</button>
+      <div id="memoryStage"></div>
+    </section>
+
+    <section class="screen" id="s3">
+      <span class="badge">3/3 · TSIPOURO DETECTOR</span>
+      <h2>Βρες όλα τα τσίπουρα.</h2>
+      <p>Έχεις 10 δευτερόλεπτα. Ο Φόρεστ θεωρεί ότι αυτό θα σου φανεί ύποπτα εύκολο.</p>
+      <p style="margin-bottom:6px"><b>Βρες και επίλεξε τα 4 τσίπουρα.</b><br><span class="muted">Ανάμεσα στα προϊόντα
+          κρύβονται τέσσερα. Ο Φόρεστ θεωρεί τη δοκιμασία σκανδαλωδώς εύκολη για σένα.</span></p>
+      <div class="countdown" id="drinkTimer">10</div>
+      <div class="drink-grid" id="drinkGrid"></div>
+    </section>
+
+    <section class="screen" id="s4">
+      <span class="badge">FINAL CHECK</span>
+      <img class="forest-photo final" src="forest.jpg" alt="Ο Φόρεστ">
+      <h2>Μία τελευταία ερώτηση.</h2>
+      <p><b>Πόσα πόδια χρειάζεται ο Φόρεστ;</b></p>
+      <div class="choices">
+        <button class="choice" onclick="forestWrong(0)">0</button>
+        <button class="choice" onclick="forestWrong(1)">1</button>
+        <button class="choice" onclick="forestWrong(2)">2</button>
+        <button class="choice" onclick="forestCorrect(this)">ΟΣΑ ΕΧΕΙ ΕΝΑΣ ΘΡΥΛΟΣ</button>
+      </div>
+    </section>
+
+    <section class="screen" id="s5">
+      <span class="badge">ACCESS GRANTED</span>
+      <img class="forest-photo final" src="forest.jpg" alt="Ο Φόρεστ">
+      <h1>Εγκρίθηκες. 🎉</h1>
+      <p>Μετά από εξονυχιστικό έλεγχο, ο Φόρεστ αποφάσισε ότι αξίζεις να είσαι η κηδεμόνας του για έναν ακόμη χρόνο.</p>
+      <p><b>Στα 41 ξαναδίνεις.</b></p>
+      <div class="card">
+        <div class="small">ΚΩΔΙΚΟΣ ΛΟΥΚΕΤΟΥ</div>
+        <div class="code">7314</div>
+      </div>
+      <p>
+        Πάρε τώρα τα AirPods σου. 🎧<br><br>
+        Και μην τα χρησιμοποιήσεις για να κάνεις ότι δεν ακούς όταν φωνάζω.<br><br>
+        <strong>Και όχι. Δεν είναι αυτά με το Noise Cancellation.</strong><br><br>
+        Δεν ήταν θέμα budget. Ήταν δική μου απαίτηση.<br><br>
+      </p>
+      <p class="small">— Φόρεστ 🐥</p>
+    </section>
+    <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-card">
+        <img class="modal-photo" src="forest.jpg" alt="Ο Φόρεστ">
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-body" id="modalBody"></div>
+        <button id="modalButton">ΣΥΝΕΧΕΙΑ</button>
+      </div>
     </div>
-  </section>
-
-  <section class="screen" id="s5">
-    <span class="badge">ACCESS GRANTED</span>
-    <img class="forest-photo final" src="forest.jpg" alt="Ο Φόρεστ">
-    <h1>Εγκρίθηκες. 🎉</h1>
-    <p>Μετά από εξονυχιστικό έλεγχο, ο Φόρεστ αποφάσισε ότι αξίζεις να είσαι η κηδεμόνας του για έναν ακόμη χρόνο.</p>
-    <p><b>Στα 41 ξαναδίνεις.</b></p>
-    <div class="card"><div class="small">ΚΩΔΙΚΟΣ ΛΟΥΚΕΤΟΥ</div><div class="code">7314</div></div>
-<p>
-  Πάρε τώρα τα AirPods σου. 🎧<br><br>
-  Και μην τα χρησιμοποιήσεις για να κάνεις ότι δεν ακούς όταν φωνάζω.<br><br>
-  <strong>Και όχι. Δεν είναι αυτά με το Noise Cancellation.</strong><br><br>
-  Δεν ήταν θέμα budget. Ήταν δική μου απαίτηση.<br><br>
-</p>
-    <p class="small">— Φόρεστ 🐥</p>
-  </section>
-  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-card">
-      <img class="modal-photo" src="forest.jpg" alt="Ο Φόρεστ">
-      <div class="modal-title" id="modalTitle"></div>
-      <div class="modal-body" id="modalBody"></div>
-      <button id="modalButton">ΣΥΝΕΧΕΙΑ</button>
-    </div>
+    <div class="confetti" id="confetti"></div>
   </div>
-  <div class="confetti" id="confetti"></div>
-</div>
-<script>
-  const screens=[...document.querySelectorAll('.screen')];
-  function showModal(type,title,html,buttonLabel,onClick){
-    const overlay=document.getElementById('modalOverlay');
-    const titleEl=document.getElementById('modalTitle');
-    const body=document.getElementById('modalBody');
-    const btn=document.getElementById('modalButton');
-    titleEl.className='modal-title '+(type==='ok'?'ok':'bad');
-    titleEl.textContent=title;
-    body.innerHTML=html;
-    btn.textContent=buttonLabel;
-    btn.className=type==='ok'?'':'secondary';
-    btn.onclick=()=>{ overlay.classList.remove('show'); if(onClick) onClick(); };
-    overlay.classList.add('show');
-  }
-  function go(n){screens.forEach(s=>s.classList.remove('active'));document.getElementById('s'+n).classList.add('active');const p=Math.min(n,4);document.getElementById('stepLabel').textContent=`${p}/4`;document.getElementById('bar').style.width=(p/4*100)+'%';if(n===3) startDrinks();}
-  let truthSelected=[];
-  function toggleTruth(btn,index){
-    if(btn.disabled) return;
-    if(truthSelected.includes(index)){
-      truthSelected=truthSelected.filter(x=>x!==index);
-      btn.classList.remove('multi-selected');
-      return;
+  <script>
+    const screens = [...document.querySelectorAll('.screen')];
+    function showModal(type, title, html, buttonLabel, onClick) {
+      const overlay = document.getElementById('modalOverlay');
+      const titleEl = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+      const btn = document.getElementById('modalButton');
+      titleEl.className = 'modal-title ' + (type === 'ok' ? 'ok' : 'bad');
+      titleEl.textContent = title;
+      body.innerHTML = html;
+      btn.textContent = buttonLabel;
+      btn.className = type === 'ok' ? '' : 'secondary';
+      btn.onclick = () => { overlay.classList.remove('show'); if (onClick) onClick(); };
+      overlay.classList.add('show');
     }
-    if(truthSelected.length>=4){
-      showModal('bad','ΜΕΧΡΙ 4 ΕΙΠΑ.','Διάβαζε προσεκτικά, φιλόλογος είσαι. 🐥','ΕΝΤΑΞΕΙ');
-      return;
+    function go(n) { screens.forEach(s => s.classList.remove('active')); document.getElementById('s' + n).classList.add('active'); const p = Math.min(n, 4); document.getElementById('stepLabel').textContent = `${p}/4`; document.getElementById('bar').style.width = (p / 4 * 100) + '%'; if (n === 3) startDrinks(); }
+    let truthSelected = [];
+    function toggleTruth(btn, index) {
+      if (btn.disabled) return;
+      if (truthSelected.includes(index)) {
+        truthSelected = truthSelected.filter(x => x !== index);
+        btn.classList.remove('multi-selected');
+        return;
+      }
+      if (truthSelected.length >= 4) {
+        showModal('bad', 'ΜΕΧΡΙ 4 ΕΙΠΑ.', 'Διάβαζε προσεκτικά, φιλόλογος είσαι. 🐥', 'ΕΝΤΑΞΕΙ');
+        return;
+      }
+      truthSelected.push(index);
+      btn.classList.add('multi-selected');
     }
-    truthSelected.push(index);
-    btn.classList.add('multi-selected');
-  }
-  function checkTruth(){
-    if(truthSelected.length===0){
-      showModal('bad','ΚΑΜΙΑ ΑΠΑΝΤΗΣΗ;','Διάλεξε τουλάχιστον μία απάντηση. Ο Φόρεστ δεν βαθμολογεί το κενό. 🐥','ΕΝΤΑΞΕΙ');
-      return;
+    function checkTruth() {
+      if (truthSelected.length === 0) {
+        showModal('bad', 'ΚΑΜΙΑ ΑΠΑΝΤΗΣΗ;', 'Διάλεξε τουλάχιστον μία απάντηση. Ο Φόρεστ δεν βαθμολογεί το κενό. 🐥', 'ΕΝΤΑΞΕΙ');
+        return;
+      }
+      document.querySelectorAll('#s1 .choice').forEach(b => b.disabled = true);
+      document.getElementById('truthSubmit').style.display = 'none';
+      const correct = truthSelected.length === 1 && truthSelected[0] === 4;
+      if (correct) {
+        document.querySelectorAll('#s1 .choice')[4].classList.add('correct');
+        showModal('ok', 'ΕΠΙΤΕΛΟΥΣ.', 'Αυτή είναι η πιο σωστή απάντηση.<br><br>Μην ενθουσιάζεσαι βέβαια. Δεν είπα ότι <b>χαίρομαι και πάρα πολύ</b> που είσαι η κηδεμόνας μου.<br><br>Απλώς οι εναλλακτικές μου είναι περιορισμένες.<br><br>Με ένα πόδι, σε φιλοζωική πτηνών δεν πάω. <b>Θα με κοροϊδεύουν τα άλλα πουλάκια.</b><br><br>Οπότε… <b>σε κρατάω.</b><br><br>— Φόρεστ 🐥', 'ΕΠΟΜΕΝΟ', () => go(2));
+      } else {
+        truthSelected.forEach(i => document.querySelectorAll('#s1 .choice')[i].classList.add('wrong'));
+        showModal('bad', 'ΛΑΘΟΣ.', 'Ναι. Είναι όλες αλήθεια.<br><br>Αλλά εγώ δεν σε ρώτησα ποιες είναι αληθινές.<br>Σε ρώτησα ποια είναι <b>Η ΠΙΟ ΣΩΣΤΗ</b>.<br><br>Νικολέττα… φιλόλογος είσαι.<br><b>Ξαναπροσπάθησε.</b><br><br>Και αυτή τη φορά θυμήσου κάτι σημαντικό:<br><br><b>Εδώ παίζεις με τους δικούς μου κανόνες.<br>Και το επίκεντρο είμαι ΕΓΩ.</b><br><br>— Φόρεστ 🐥', 'ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ', retryPhil);
+      }
     }
-    document.querySelectorAll('#s1 .choice').forEach(b=>b.disabled=true);
-    document.getElementById('truthSubmit').style.display='none';
-    const correct=truthSelected.length===1 && truthSelected[0]===4;
-    if(correct){
-      document.querySelectorAll('#s1 .choice')[4].classList.add('correct');
-      showModal('ok','ΕΠΙΤΕΛΟΥΣ.','Αυτή είναι η πιο σωστή απάντηση.<br><br>Μην ενθουσιάζεσαι βέβαια. Δεν είπα ότι <b>χαίρομαι και πάρα πολύ</b> που είσαι η κηδεμόνας μου.<br><br>Απλώς οι εναλλακτικές μου είναι περιορισμένες.<br><br>Με ένα πόδι, σε φιλοζωική πτηνών δεν πάω. <b>Θα με κοροϊδεύουν τα άλλα πουλάκια.</b><br><br>Οπότε… <b>σε κρατάω.</b><br><br>— Φόρεστ 🐥','ΕΠΟΜΕΝΟ',()=>go(2));
-    }else{
-      truthSelected.forEach(i=>document.querySelectorAll('#s1 .choice')[i].classList.add('wrong'));
-      showModal('bad','ΛΑΘΟΣ.','Ναι. Είναι όλες αλήθεια.<br><br>Αλλά εγώ δεν σε ρώτησα ποιες είναι αληθινές.<br>Σε ρώτησα ποια είναι <b>Η ΠΙΟ ΣΩΣΤΗ</b>.<br><br>Νικολέττα… φιλόλογος είσαι.<br><b>Ξαναπροσπάθησε.</b><br><br>Και αυτή τη φορά θυμήσου κάτι σημαντικό:<br><br><b>Εδώ παίζεις με τους δικούς μου κανόνες.<br>Και το επίκεντρο είμαι ΕΓΩ.</b><br><br>— Φόρεστ 🐥','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ',retryPhil);
+    function retryPhil() {
+      truthSelected = [];
+      document.querySelectorAll('#s1 .choice').forEach(b => { b.disabled = false; b.classList.remove('wrong', 'correct', 'multi-selected') });
+      document.getElementById('truthSubmit').style.display = 'block';
     }
-  }
-  function retryPhil(){
-    truthSelected=[];
-    document.querySelectorAll('#s1 .choice').forEach(b=>{b.disabled=false;b.classList.remove('wrong','correct','multi-selected')});
-    document.getElementById('truthSubmit').style.display='block';
-  }
-  const targetWords=['ΤΣΙΠΟΥΡΟ','ΜΙΚΙ','ΘΑΛΑΣΣΑ','ΜΟΛΥΒΙ','ΚΑΝΑΡΙΝΙ','ΑΜΦΙΘΕΑΤΡΟ','ΠΥΞΙΔΑ','ΒΕΡΑΝΤΑ'];
-  const allWords=['ΤΣΙΠΟΥΡΟ','ΠΑΡΑΛΙΑ','ΜΙΚΙ','ΣΤΥΛΟ','ΘΑΛΑΣΣΑ','ΠΑΠΑΓΑΛΟΣ','ΜΟΛΥΒΙ','ΧΑΡΤΗΣ','ΚΑΝΑΡΙΝΙ','ΜΠΑΛΚΟΝΙ','ΑΜΦΙΘΕΑΤΡΟ','ΠΥΞΙΔΑ','ΒΕΡΑΝΤΑ','ΚΡΑΣΙ','ΜΙΝΙ','ΘΕΑΤΡΟ'];
-  function startMemory(){document.getElementById('memoryStart').style.display='none';let t=10;document.getElementById('memoryStage').innerHTML=`<div class="countdown" id="memTimer">${t}</div><div class="words">${targetWords.map(w=>`<div class="word">${w}</div>`).join('')}</div>`;const int=setInterval(()=>{t--;document.getElementById('memTimer').textContent=t;if(t===0){clearInterval(int);memoryPick();}},1000)}
-  function memoryPick(){let sel=[];document.getElementById('memoryStage').innerHTML=`<p><b>Επίλεξε τις 8 λέξεις που είδες.</b></p><div class="words">${allWords.map(w=>`<button class="word" onclick="toggleWord(this,'${w}')">${w}</button>`).join('')}</div><button onclick="checkMemory()">ΕΛΕΓΧΟΣ</button>`;window.memSel=sel;}
-  function toggleWord(el,w){window.memSel=window.memSel||[];if(window.memSel.includes(w)){window.memSel=window.memSel.filter(x=>x!==w);el.classList.remove('selected')}else if(window.memSel.length<8){window.memSel.push(w);el.classList.add('selected')}}
-  function checkMemory(){
-    const correct=window.memSel.filter(w=>targetWords.includes(w)).length;
-    const buttons=[...document.querySelectorAll('#memoryStage .word')];
-    buttons.forEach(b=>b.disabled=true);
-    if(correct>=6){
-      const msg=correct===8 ? '8/8. Ο Φόρεστ είναι ενοχλητικά εντυπωσιασμένος.' : `${correct}/8. Μνήμη: λειτουργική. Καλύτερα απ’ όσο περίμενε ο Φόρεστ.`;
-      showModal('ok','ΜΝΗΜΗ: ΛΕΙΤΟΥΡΓΙΚΗ','🧠 '+msg,'ΕΠΟΜΕΝΟ',()=>go(3));
-    }else{
-      showModal('bad','ΑΝΗΣΥΧΗΤΙΚΟ.',`🚨 ${correct}/8. Ο Φόρεστ αποδίδει το αποτέλεσμα στην ηλικία.`,'ΕΠΑΝΕΞΕΤΑΣΗ',restartMemory);
+    const targetWords = ['ΤΣΙΠΟΥΡΟ', 'ΜΙΚΙ', 'ΘΑΛΑΣΣΑ', 'ΜΟΛΥΒΙ', 'ΚΑΝΑΡΙΝΙ', 'ΑΜΦΙΘΕΑΤΡΟ', 'ΠΥΞΙΔΑ', 'ΒΕΡΑΝΤΑ'];
+    const allWords = ['ΤΣΙΠΟΥΡΟ', 'ΠΑΡΑΛΙΑ', 'ΜΙΚΙ', 'ΣΤΥΛΟ', 'ΘΑΛΑΣΣΑ', 'ΠΑΠΑΓΑΛΟΣ', 'ΜΟΛΥΒΙ', 'ΧΑΡΤΗΣ', 'ΚΑΝΑΡΙΝΙ', 'ΜΠΑΛΚΟΝΙ', 'ΑΜΦΙΘΕΑΤΡΟ', 'ΠΥΞΙΔΑ', 'ΒΕΡΑΝΤΑ', 'ΚΡΑΣΙ', 'ΜΙΝΙ', 'ΘΕΑΤΡΟ'];
+    function startMemory() { document.getElementById('memoryStart').style.display = 'none'; let t = 10; document.getElementById('memoryStage').innerHTML = `<div class="countdown" id="memTimer">${t}</div><div class="words">${targetWords.map(w => `<div class="word">${w}</div>`).join('')}</div>`; const int = setInterval(() => { t--; document.getElementById('memTimer').textContent = t; if (t === 0) { clearInterval(int); memoryPick(); } }, 1000) }
+    function memoryPick() { let sel = []; document.getElementById('memoryStage').innerHTML = `<p><b>Επίλεξε τις 8 λέξεις που είδες.</b></p><div class="words">${allWords.map(w => `<button class="word" onclick="toggleWord(this,'${w}')">${w}</button>`).join('')}</div><button onclick="checkMemory()">ΕΛΕΓΧΟΣ</button>`; window.memSel = sel; }
+    function toggleWord(el, w) { window.memSel = window.memSel || []; if (window.memSel.includes(w)) { window.memSel = window.memSel.filter(x => x !== w); el.classList.remove('selected') } else if (window.memSel.length < 8) { window.memSel.push(w); el.classList.add('selected') } }
+    function checkMemory() {
+      const correct = window.memSel.filter(w => targetWords.includes(w)).length;
+      const buttons = [...document.querySelectorAll('#memoryStage .word')];
+      buttons.forEach(b => b.disabled = true);
+      if (correct >= 6) {
+        const msg = correct === 8 ? '8/8. Ο Φόρεστ είναι ενοχλητικά εντυπωσιασμένος.' : `${correct}/8. Μνήμη: λειτουργική. Καλύτερα απ’ όσο περίμενε ο Φόρεστ.`;
+        showModal('ok', 'ΜΝΗΜΗ: ΛΕΙΤΟΥΡΓΙΚΗ', '🧠 ' + msg, 'ΕΠΟΜΕΝΟ', () => go(3));
+      } else {
+        showModal('bad', 'ΑΝΗΣΥΧΗΤΙΚΟ.', `🚨 ${correct}/8. Ο Φόρεστ αποδίδει το αποτέλεσμα στην ηλικία.`, 'ΕΠΑΝΕΞΕΤΑΣΗ', restartMemory);
+      }
     }
-  }
-  function restartMemory(){document.getElementById('memoryStart').style.display='block';document.getElementById('memoryStart').textContent='ΕΠΑΝΕΞΕΤΑΣΗ';document.getElementById('memoryStage').innerHTML='';}
+    function restartMemory() { document.getElementById('memoryStart').style.display = 'block'; document.getElementById('memoryStart').textContent = 'ΕΠΑΝΕΞΕΤΑΣΗ'; document.getElementById('memoryStage').innerHTML = ''; }
 
-  const drinks=[
-    {name:'Τσίπουρο Αποστολάκη',tsipouro:true,img:'images/drinks/tsipouro_apostolaki.png'},
-    {name:'Τσίπουρο Κατώγι Αβέρωφ',tsipouro:true,img:'images/drinks/tsipouro_katogi_averof.png'},
-    {name:'Τσίπουρο Βασιλεία',tsipouro:true,img:'images/drinks/tsipouro_vasilia.png'},
-    {name:'Δεκαράκι',tsipouro:true,img:'images/drinks/tsipouro_dekaraki.png'},
-    {name:'Coca-Cola',tsipouro:false,img:'images/drinks/coca_cola.png'},
-    {name:'Fanta',tsipouro:false,img:'images/drinks/fanta.png'},
-    {name:'Λουξ',tsipouro:false,img:'images/drinks/loux.png'},
-    {name:'Sprite',tsipouro:false,img:'images/drinks/sprite.png'},
-    {name:'Μάμος',tsipouro:false,img:'images/drinks/mamos.png'},
-    {name:'Aperol Spritz',tsipouro:false,img:'images/drinks/aperol_spritz.png'},
-    {name:'Corona',tsipouro:false,img:'images/drinks/corona.png'},
-    {name:'Coca-Cola Light',tsipouro:false,img:'images/drinks/coca_cola_light.png'},
-    {name:'Amita',tsipouro:false,img:'images/drinks/amita.png'}
-  ];
-  function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-  function fallbackTile(name){
-    const icons={'Νερό':'💧','Κακάο':'🥛','Καφές':'☕️','Aperol':'🍹','Μάμος':'🍺','Heineken':'🍺'};
-    return `<div class="fallback"><div style="font-size:26px;margin-bottom:5px">${icons[name]||'🥤'}</div>${name}</div>`;
-  }
-  function startDrinks(){
-    const grid=document.getElementById('drinkGrid'); grid.innerHTML=''; let found=0;
-    shuffle(drinks).forEach(d=>{
-      const e=document.createElement('div'); e.className='drink';
-      if(d.img){
-        const im=document.createElement('img'); im.src=d.img; im.alt=d.name;
-        im.onerror=()=>{e.innerHTML=fallbackTile(d.name)}; e.appendChild(im);
-      } else e.innerHTML=fallbackTile(d.name);
-      e.onclick=()=>{
-        if(d.tsipouro&&!e.classList.contains('selected')){
-          e.classList.add('selected'); found++;
-          if(found===4){
-            clearInterval(window.drinkInt); [...grid.children].forEach(x=>x.style.pointerEvents='none');
-            showModal('ok','4/4 — ΑΨΟΓΑ.','🍶 Εντυπωσιακό.<br><br>Ούτε ένα δευτερόλεπτο αμφιβολίας όταν πρόκειται για τσίπουρο.<br><br><b>Κάποια πράγματα δεν τα ξεχνάς ούτε στα 40.</b><br><br>— Φόρεστ 🐥','ΕΠΟΜΕΝΟ',()=>go(4));
-          }
-        } else if(!d.tsipouro){e.classList.add('shake');setTimeout(()=>e.classList.remove('shake'),350)}
-      };
-      grid.appendChild(e);
-    });
-    let t=10; document.getElementById('drinkTimer').textContent=t; clearInterval(window.drinkInt);
-    window.drinkInt=setInterval(()=>{t--;document.getElementById('drinkTimer').textContent=t;if(t<=0){clearInterval(window.drinkInt);[...grid.children].forEach(x=>x.style.pointerEvents='none');showModal('bad','Ο ΧΡΟΝΟΣ ΤΕΛΕΙΩΣΕ.','⏱️ Ο Φόρεστ αρνείται να πιστέψει ότι εσύ δεν βρήκες τα τσίπουρα.','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ',startDrinks)}},1000);
-  }
-
-  function forestWrong(answer){
-    if(answer===1){
-      showModal('bad','ΛΑΘΟΣ.','Νικολέττα… Δεν σε ρώτησα πόσα <b>έχει</b>.<br>Σε ρώτησα πόσα <b>χρειάζεται</b>.<br><br><b>Φιλόλογος είσαι.</b><br><br>— Φόρεστ 🐥','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
-    } else if(answer===0){
-      showModal('bad','ΣΥΓΓΝΩΜΗ;','<b>ΜΗΔΕΝ;</b><br><br>Έχω ήδη χάσει το ένα.<br><b>Θες να μου πάρεις και το άλλο;</b><br><br>Αρχίζω να αμφιβάλλω σοβαρά για την κηδεμονία μου.<br><br>— Φόρεστ 🐥','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
-    } else if(answer===2){
-      showModal('bad','ΔΥΟ;','Τι είμαι, πλούσιος;<br><br>Ένα έχω και κάνω μια χαρά τη δουλειά μου.<br><b>Δεν πετάμε λεφτά σε περιττά εξαρτήματα.</b><br><br>— Φόρεστ 🐥','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
+    const drinks = [
+      { name: 'Τσίπουρο Αποστολάκη', tsipouro: true, img: 'images/drinks/tsipouro_apostolaki.png' },
+      { name: 'Τσίπουρο Κατώγι Αβέρωφ', tsipouro: true, img: 'images/drinks/tsipouro_katogi_averof.png' },
+      { name: 'Τσίπουρο Βασιλεία', tsipouro: true, img: 'images/drinks/tsipouro_vasilia.png' },
+      { name: 'Δεκαράκι', tsipouro: true, img: 'images/drinks/tsipouro_dekaraki.png' },
+      { name: 'Coca-Cola', tsipouro: false, img: 'images/drinks/coca_cola.png' },
+      { name: 'Fanta', tsipouro: false, img: 'images/drinks/fanta.png' },
+      { name: 'Λουξ', tsipouro: false, img: 'images/drinks/loux.png' },
+      { name: 'Sprite', tsipouro: false, img: 'images/drinks/sprite.png' },
+      { name: 'Μάμος', tsipouro: false, img: 'images/drinks/mamos.png' },
+      { name: 'Aperol Spritz', tsipouro: false, img: 'images/drinks/aperol_spritz.png' },
+      { name: 'Corona', tsipouro: false, img: 'images/drinks/corona.png' },
+      { name: 'Coca-Cola Light', tsipouro: false, img: 'images/drinks/coca_cola_light.png' },
+      { name: 'Amita', tsipouro: false, img: 'images/drinks/amita.png' }
+    ];
+    function shuffle(a) { return [...a].sort(() => Math.random() - .5) }
+    function fallbackTile(name) {
+      const icons = { 'Νερό': '💧', 'Κακάο': '🥛', 'Καφές': '☕️', 'Aperol': '🍹', 'Μάμος': '🍺', 'Heineken': '🍺' };
+      return `<div class="fallback"><div style="font-size:26px;margin-bottom:5px">${icons[name] || '🥤'}</div>${name}</div>`;
     }
-  }
-  function forestCorrect(btn){
-    document.querySelectorAll('#s4 .choice').forEach(b=>b.disabled=true);
-    btn.classList.add('correct');
-    showModal('ok','ΣΩΣΤΑ.','Ο Φόρεστ εγκρίνει την απάντηση. 🐥','ΔΕΣ ΤΟΝ ΚΩΔΙΚΟ',finishGame);
-  }
-  function finishGame(){go(5);document.getElementById('bar').style.width='100%';document.getElementById('stepLabel').textContent='4/4';const c=document.getElementById('confetti');for(let i=0;i<35;i++){const s=document.createElement('span');s.textContent=['🎉','✨','🍶','🐥'][Math.floor(Math.random()*4)];s.style.left=Math.random()*100+'%';s.style.animationDelay=Math.random()*.8+'s';c.appendChild(s)}if(navigator.vibrate) navigator.vibrate([100,60,120]);}
-</script>
+    function startDrinks() {
+      const grid = document.getElementById('drinkGrid'); grid.innerHTML = ''; let found = 0;
+      shuffle(drinks).forEach(d => {
+        const e = document.createElement('div'); e.className = 'drink';
+        if (d.img) {
+          const im = document.createElement('img'); im.src = d.img; im.alt = d.name;
+          im.onerror = () => { e.innerHTML = fallbackTile(d.name) }; e.appendChild(im);
+        } else e.innerHTML = fallbackTile(d.name);
+        e.onclick = () => {
+          if (d.tsipouro && !e.classList.contains('selected')) {
+            e.classList.add('selected'); found++;
+            if (found === 4) {
+              clearInterval(window.drinkInt);[...grid.children].forEach(x => x.style.pointerEvents = 'none');
+              showModal('ok', '4/4 — ΑΨΟΓΑ.', '🍶 Εντυπωσιακό.<br><br>Ούτε ένα δευτερόλεπτο αμφιβολίας όταν πρόκειται για τσίπουρο.<br><br><b>Κάποια πράγματα δεν τα ξεχνάς ούτε στα 40.</b><br><br>— Φόρεστ 🐥', 'ΕΠΟΜΕΝΟ', () => go(4));
+            }
+          } else if (!d.tsipouro) { e.classList.add('shake'); setTimeout(() => e.classList.remove('shake'), 350) }
+        };
+        grid.appendChild(e);
+      });
+      let t = 10; document.getElementById('drinkTimer').textContent = t; clearInterval(window.drinkInt);
+      window.drinkInt = setInterval(() => { t--; document.getElementById('drinkTimer').textContent = t; if (t <= 0) { clearInterval(window.drinkInt);[...grid.children].forEach(x => x.style.pointerEvents = 'none'); showModal('bad', 'Ο ΧΡΟΝΟΣ ΤΕΛΕΙΩΣΕ.', '⏱️ Ο Φόρεστ αρνείται να πιστέψει ότι εσύ δεν βρήκες τα τσίπουρα.', 'ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ', startDrinks) } }, 1000);
+    }
+
+    function forestWrong(answer) {
+      if (answer === 1) {
+        showModal('bad', 'ΛΑΘΟΣ.', 'Νικολέττα… Δεν σε ρώτησα πόσα <b>έχει</b>.<br>Σε ρώτησα πόσα <b>χρειάζεται</b>.<br><br><b>Φιλόλογος είσαι.</b><br><br>— Φόρεστ 🐥', 'ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
+      } else if (answer === 0) {
+        showModal('bad', 'ΣΥΓΓΝΩΜΗ;', '<b>ΜΗΔΕΝ;</b><br><br>Έχω ήδη χάσει το ένα.<br><b>Θες να μου πάρεις και το άλλο;</b><br><br>Αρχίζω να αμφιβάλλω σοβαρά για την κηδεμονία μου.<br><br>— Φόρεστ 🐥', 'ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
+      } else if (answer === 2) {
+        showModal('bad', 'ΔΥΟ;', 'Τι είμαι, πλούσιος;<br><br>Ένα έχω και κάνω μια χαρά τη δουλειά μου.<br><b>Δεν πετάμε λεφτά σε περιττά εξαρτήματα.</b><br><br>— Φόρεστ 🐥', 'ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
+      }
+    }
+    function forestCorrect(btn) {
+      document.querySelectorAll('#s4 .choice').forEach(b => b.disabled = true);
+      btn.classList.add('correct');
+      showModal('ok', 'ΣΩΣΤΑ.', 'Ο Φόρεστ εγκρίνει την απάντηση. 🐥', 'ΔΕΣ ΤΟΝ ΚΩΔΙΚΟ', finishGame);
+    }
+    function finishGame() {
+      go(5); document.getElementById('bar').style.width = '100%'; document.getElementById('stepLabel').textContent = '4/4'; const c = document.getElementById('confetti'); for (let i = 0; i < 35; i++) {
+        const s = document.createElement('span'); s.textContent = ['🎉', '✨', '🍶', '🐥'][Math.floor(Math.random() * 4)]; s.style.left = Math.random() * 100 + '%'; s.style.animationDelay = Math.random() * .8 + 's'; c.appendChild(s)
+        s.addEventListener('animationend', () => {
+          s.remove();
+        });
+      } if (navigator.vibrate) navigator.vibrate([100, 60, 120]);
+    }
+  </script>
 </body>
+
 </html>
