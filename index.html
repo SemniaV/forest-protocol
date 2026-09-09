@@ -671,7 +671,7 @@
     }
     function finishGame() {
       go(5); document.getElementById('bar').style.width = '100%'; document.getElementById('stepLabel').textContent = '4/4'; const c = document.getElementById('confetti'); for (let i = 0; i < 35; i++) {
-        const s = document.createElement('span'); s.textContent = ['🎉', '✨', '🍶', '🐥'][Math.floor(Math.random() * 4)]; s.style.left = Math.random() * 100 + '%'; s.style.animationDelay = Math.random() * .8 + 's'; c.appendChild(s)
+        const s = document.createElement('span'); s.textContent = ['🎉', '✨', '🍻', '🐥'][Math.floor(Math.random() * 4)]; s.style.left = Math.random() * 100 + '%'; s.style.animationDelay = Math.random() * .8 + 's'; c.appendChild(s)
         s.addEventListener('animationend', () => {
           s.remove();
         });
