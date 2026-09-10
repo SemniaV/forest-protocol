@@ -316,6 +316,18 @@
       line-height: 1.15
     }
 
+
+    .vision-test {
+      display: grid;
+      gap: 10px;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .vision-test div {
+      overflow-wrap: anywhere;
+    }
+
     .code {
       font-size: 44px;
       letter-spacing: .18em;
@@ -449,7 +461,7 @@
 
 <body>
   <div class="app" id="app">
-    <div class="top"><span>FOREST PROTOCOL</span><span id="stepLabel">0/4</span></div>
+    <div class="top"><span>FOREST PROTOCOL</span><span id="stepLabel">0/5</span></div>
     <div class="progress">
       <div id="bar"></div>
     </div>
@@ -502,6 +514,33 @@
     </section>
 
     <section class="screen" id="s4">
+      <span class="badge">4/4 · VISION CHECK 40+</span>
+      <img class="forest-photo final" src="forest.jpg" alt="Ο Φόρεστ">
+      <h2>Τεστ πρεσβυωπίας. 👓</h2>
+      <p>Διάβασε το παρακάτω κείμενο <b>ΔΥΝΑΤΑ</b>.</p>
+      <p class="small">Οι παρευρισκόμενοι είναι υπεύθυνοι για την αξιολόγηση. Ο Φόρεστ δεν δέχεται ψευδείς καταθέσεις.</p>
+
+      <div class="card vision-test">
+        <div style="font-size:22px;font-weight:800">ΝΙΚΟΛΕΤΤΑ, ΕΙΜΑΙ 40 ΕΤΩΝ ΚΑΙ ΒΛΕΠΩ ΜΙΑ ΧΑΡΑ.</div>
+        <div style="font-size:20px">Δεν χρειάζομαι γυαλιά για να διαβάσω αυτό.</div>
+        <div style="font-size:18px">Ούτε χρειάζεται να απομακρύνω το κινητό.</div>
+        <div style="font-size:16px">Αν αυτή τη στιγμή τεντώνω το χέρι μου, είναι εντελώς τυχαίο.</div>
+        <div style="font-size:14px">Και αν μισοκλείνω τα μάτια μου, φταίει ο φωτισμός.</div>
+        <div style="font-size:12px">Σε καμία περίπτωση δεν φταίνε τα σαράντα.</div>
+        <div style="font-size:10px">Ακόμα διαβάζεις; Ενδιαφέρον.</div>
+        <div style="font-size:9px">Για δοκίμασε λίγο πιο μακριά το κινητό.</div>
+        <div style="font-size:8px">Κι άλλο.</div>
+        <div style="font-size:7px">ΚΙ ΑΛΛΟ.</div>
+        <div style="font-size:6px">Ωραία. Τώρα μοιάζεις ακριβώς με σαραντάρα που αρνείται ότι χρειάζεται γυαλιά.</div>
+        <div style="font-size:5px">Μην ανησυχείς. Δεν θα το πω σε κανέναν.</div>
+        <div style="font-size:4px">Το έχουν ήδη δει όλοι.</div>
+        <div style="font-size:4px">— Φόρεστ 🐥</div>
+      </div>
+
+      <button onclick="visionComplete()">ΤΟ ΔΙΑΒΑΣΑ ΟΛΟ 👓</button>
+    </section>
+
+    <section class="screen" id="s5">
       <span class="badge">FINAL CHECK</span>
       <img class="forest-photo final" src="forest.jpg" alt="Ο Φόρεστ">
       <h2>Μία τελευταία ερώτηση.</h2>
@@ -514,7 +553,7 @@
       </div>
     </section>
 
-    <section class="screen" id="s5">
+    <section class="screen" id="s6">
       <span class="badge">ACCESS GRANTED</span>
       <img class="forest-photo final" src="forest.jpg" alt="Ο Φόρεστ">
       <h1>Εγκρίθηκες. 🎉</h1>
@@ -557,7 +596,7 @@
       btn.onclick = () => { overlay.classList.remove('show'); if (onClick) onClick(); };
       overlay.classList.add('show');
     }
-    function go(n) { screens.forEach(s => s.classList.remove('active')); document.getElementById('s' + n).classList.add('active'); const p = Math.min(n, 4); document.getElementById('stepLabel').textContent = `${p}/4`; document.getElementById('bar').style.width = (p / 4 * 100) + '%'; if (n === 3) startDrinks(); }
+    function go(n) { screens.forEach(s => s.classList.remove('active')); document.getElementById('s' + n).classList.add('active'); const p = Math.min(n, 5); document.getElementById('stepLabel').textContent = `${p}/5`; document.getElementById('bar').style.width = (p / 5 * 100) + '%'; if (n === 3) startDrinks(); }
     let truthSelected = [];
     function toggleTruth(btn, index) {
       if (btn.disabled) return;
@@ -655,6 +694,16 @@
       window.drinkInt = setInterval(() => { t--; document.getElementById('drinkTimer').textContent = t; if (t <= 0) { clearInterval(window.drinkInt);[...grid.children].forEach(x => x.style.pointerEvents = 'none'); showModal('bad', 'Ο ΧΡΟΝΟΣ ΤΕΛΕΙΩΣΕ.', '⏱️ Ο Φόρεστ αρνείται να πιστέψει ότι εσύ δεν βρήκες τα τσίπουρα.', 'ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ', startDrinks) } }, 1000);
     }
 
+    function visionComplete() {
+      showModal(
+        'ok',
+        'ΟΦΘΑΛΜΟΛΟΓΙΚΟΣ ΕΛΕΓΧΟΣ: ΟΛΟΚΛΗΡΩΘΗΚΕ',
+        'Όραση: <b>συζητήσιμη.</b><br>Άρνηση της ηλικίας: <b>εξαιρετική.</b><br><br>Θα σε ξαναεξετάσω στα 41.<br><br>— Φόρεστ 🐥',
+        'ΕΠΟΜΕΝΟ',
+        () => go(5)
+      );
+    }
+
     function forestWrong(answer) {
       if (answer === 1) {
         showModal('bad', 'ΛΑΘΟΣ.', 'Νικολέττα… Δεν σε ρώτησα πόσα <b>έχει</b>.<br>Σε ρώτησα πόσα <b>χρειάζεται</b>.<br><br><b>Φιλόλογος είσαι.</b><br><br>— Φόρεστ 🐥', 'ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
@@ -665,12 +714,12 @@
       }
     }
     function forestCorrect(btn) {
-      document.querySelectorAll('#s4 .choice').forEach(b => b.disabled = true);
+      document.querySelectorAll('#s5 .choice').forEach(b => b.disabled = true);
       btn.classList.add('correct');
       showModal('ok', 'ΣΩΣΤΑ.', 'Ο Φόρεστ εγκρίνει την απάντηση. 🐥', 'ΔΕΣ ΤΟΝ ΚΩΔΙΚΟ', finishGame);
     }
     function finishGame() {
-      go(5); document.getElementById('bar').style.width = '100%'; document.getElementById('stepLabel').textContent = '4/4'; const c = document.getElementById('confetti'); for (let i = 0; i < 35; i++) {
+      go(6); document.getElementById('bar').style.width = '100%'; document.getElementById('stepLabel').textContent = '5/5'; const c = document.getElementById('confetti'); for (let i = 0; i < 35; i++) {
         const s = document.createElement('span'); s.textContent = ['🎉', '✨', '🍻', '🐥'][Math.floor(Math.random() * 4)]; s.style.left = Math.random() * 100 + '%'; s.style.animationDelay = Math.random() * .8 + 's'; c.appendChild(s)
         s.addEventListener('animationend', () => {
           s.remove();
