@@ -317,6 +317,10 @@
     }
 
 
+    .observation-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+    .observation-option{background:#f5f3ed;border:2px solid #30303b;border-radius:16px;padding:5px;overflow:hidden;cursor:pointer}
+    .observation-option img{width:100%;height:auto;display:block;border-radius:11px}
+
     .vision-test {
       display: grid;
       gap: 10px;
@@ -461,7 +465,7 @@
 
 <body>
   <div class="app" id="app">
-    <div class="top"><span>FOREST PROTOCOL</span><span id="stepLabel">0/5</span></div>
+    <div class="top"><span>FOREST PROTOCOL</span><span id="stepLabel">0/6</span></div>
     <div class="progress">
       <div id="bar"></div>
     </div>
@@ -480,7 +484,7 @@
     </section>
 
     <section class="screen" id="s1">
-      <span class="badge">1/4 · ΤΟ ΤΕΣΤ ΤΗΣ ΑΛΗΘΕΙΑΣ</span>
+      <span class="badge">1/3 · ΤΟ ΤΕΣΤ ΤΗΣ ΑΛΗΘΕΙΑΣ</span>
       <h2>Ο Φόρεστ λέει:</h2>
       <p>Ποια από τις παρακάτω δηλώσεις είναι <b>η πιο σωστή;</b></p>
       <p class="small">Μπορείς να επιλέξεις από 1 έως 4 απαντήσεις.</p>
@@ -496,7 +500,7 @@
     </section>
 
     <section class="screen" id="s2">
-      <span class="badge">2/4 · ΜΝΗΜΗ 40+</span>
+      <span class="badge">2/3 · ΜΝΗΜΗ 40+</span>
       <h2>Υποχρεωτικός έλεγχος μνήμης.</h2>
       <p>Θα δεις 8 λέξεις για 10 δευτερόλεπτα. Μετά θα πρέπει να τις ξαναβρείς.</p>
       <button id="memoryStart" onclick="startMemory()">ΕΙΜΑΙ ΕΤΟΙΜΗ</button>
@@ -504,7 +508,7 @@
     </section>
 
     <section class="screen" id="s3">
-      <span class="badge">3/4 · TSIPOURO DETECTOR</span>
+      <span class="badge">3/3 · TSIPOURO DETECTOR</span>
       <h2>Βρες όλα τα τσίπουρα.</h2>
       <p>Έχεις 10 δευτερόλεπτα. Ο Φόρεστ θεωρεί ότι αυτό θα σου φανεί ύποπτα εύκολο.</p>
       <p style="margin-bottom:6px"><b>Βρες και επίλεξε τα 4 τσίπουρα.</b><br><span class="muted">Ανάμεσα στα προϊόντα
@@ -514,33 +518,45 @@
     </section>
 
     <section class="screen" id="s4">
-      <span class="badge">4/4 · VISION CHECK 40+</span>
+      <span class="badge">4/6 · ΤΕΣΤ ΠΑΡΑΤΗΡΗΤΙΚΟΤΗΤΑΣ</span>
+      <img class="forest-photo final" src="forest.jpg" alt="Ο Φόρεστ">
+      <h2>Πόσο καλά ξέρεις τι καπνίζεις; 👀</h2>
+      <p>Μόνο <b>ένα</b> από τα τέσσερα πακέτα είναι το πραγματικό. Τα υπόλοιπα έχουν πειραχτεί λίγο.</p>
+      <p class="small">Διάλεξε το σωστό TEREA Silver.</p>
+      <div class="observation-grid">
+        <button class="observation-option" onclick="checkObservation(false)"><img src="images/drinks/line.png" alt="Επιλογή 1"></button>
+        <button class="observation-option" onclick="checkObservation(true)"><img src="images/drinks/original.png" alt="Επιλογή 2"></button>
+        <button class="observation-option" onclick="checkObservation(false)"><img src="images/drinks/star.png" alt="Επιλογή 3"></button>
+        <button class="observation-option" onclick="checkObservation(false)"><img src="images/drinks/heart.png" alt="Επιλογή 4"></button>
+      </div>
+    </section>
+
+    <section class="screen" id="s5">
+      <span class="badge">5/6 · VISION CHECK 40+</span>
       <img class="forest-photo final" src="forest.jpg" alt="Ο Φόρεστ">
       <h2>Τεστ πρεσβυωπίας. 👓</h2>
       <p>Διάβασε το παρακάτω κείμενο <b>ΔΥΝΑΤΑ</b>.</p>
       <p class="small">Οι παρευρισκόμενοι είναι υπεύθυνοι για την αξιολόγηση. Ο Φόρεστ δεν δέχεται ψευδείς καταθέσεις.</p>
-
       <div class="card vision-test">
-        <div style="font-size:20px;font-weight:800">ΕΙΜΑΙ Η ΝΙΚΟΛΕΤΤΑ, ΕΙΜΑΙ 40 ΕΤΩΝ ΚΑΙ ΒΛΕΠΩ ΜΙΑ ΧΑΡΑ.</div>
-        <div style="font-size:18px">Δεν χρειάζομαι γυαλιά για να διαβάσω αυτό.</div>
-        <div style="font-size:16px">Ούτε χρειάζεται να απομακρύνω το κινητό.</div>
-        <div style="font-size:14px">Αν αυτή τη στιγμή τεντώνω το χέρι μου, είναι εντελώς τυχαίο.</div>
-        <div style="font-size:12px">Και αν μισοκλείνω τα μάτια μου, φταίει ο φωτισμός.</div>
-        <div style="font-size:10px">Σε καμία περίπτωση δεν φταίνε τα σαράντα.</div>
-        <div style="font-size:9px">Ακόμα διαβάζεις; Ενδιαφέρον.</div>
-        <div style="font-size:8px">Για δοκίμασε λίγο πιο μακριά το κινητό.</div>
-        <div style="font-size:7px">Κι άλλο.</div>
-        <div style="font-size:6px">ΚΙ ΑΛΛΟ.</div>
-        <div style="font-size:5px">Ωραία. Τώρα μοιάζεις ακριβώς με σαραντάρα που αρνείται ότι χρειάζεται γυαλιά.</div>
-        <div style="font-size:4px">Μην ανησυχείς. Δεν θα το πω σε κανέναν.</div>
-        <div style="font-size:3px">Το έχουν ήδη δει όλοι.</div>
-        <div style="font-size:2px">— Φόρεστ 🐥</div>
+        <div style="font-size:22px;font-weight:800">ΝΙΚΟΛΕΤΤΑ, ΕΙΜΑΙ 40 ΕΤΩΝ ΚΑΙ ΒΛΕΠΩ ΜΙΑ ΧΑΡΑ.</div>
+        <div style="font-size:20px">Δεν χρειάζομαι γυαλιά για να διαβάσω αυτό.</div>
+        <div style="font-size:18px">Ούτε χρειάζεται να απομακρύνω το κινητό.</div>
+        <div style="font-size:16px">Αν αυτή τη στιγμή τεντώνω το χέρι μου, είναι εντελώς τυχαίο.</div>
+        <div style="font-size:14px">Και αν μισοκλείνω τα μάτια μου, φταίει ο φωτισμός.</div>
+        <div style="font-size:12px">Σε καμία περίπτωση δεν φταίνε τα σαράντα.</div>
+        <div style="font-size:10px">Ακόμα διαβάζεις; Ενδιαφέρον.</div>
+        <div style="font-size:9px">Για δοκίμασε λίγο πιο μακριά το κινητό.</div>
+        <div style="font-size:8px">Κι άλλο.</div>
+        <div style="font-size:7px">ΚΙ ΑΛΛΟ.</div>
+        <div style="font-size:6px">Ωραία. Τώρα μοιάζεις ακριβώς με σαραντάρα που αρνείται ότι χρειάζεται γυαλιά.</div>
+        <div style="font-size:5px">Μην ανησυχείς. Δεν θα το πω σε κανέναν.</div>
+        <div style="font-size:4px">Το έχουν ήδη δει όλοι.</div>
+        <div style="font-size:4px">— Φόρεστ 🐥</div>
       </div>
-
       <button onclick="visionComplete()">ΤΟ ΔΙΑΒΑΣΑ ΟΛΟ 👓</button>
     </section>
 
-    <section class="screen" id="s5">
+    <section class="screen" id="s6">
       <span class="badge">FINAL CHECK</span>
       <img class="forest-photo final" src="forest.jpg" alt="Ο Φόρεστ">
       <h2>Μία τελευταία ερώτηση.</h2>
@@ -553,7 +569,7 @@
       </div>
     </section>
 
-    <section class="screen" id="s6">
+    <section class="screen" id="s7">
       <span class="badge">ACCESS GRANTED</span>
       <img class="forest-photo final" src="forest.jpg" alt="Ο Φόρεστ">
       <h1>Εγκρίθηκες. 🎉</h1>
@@ -561,8 +577,12 @@
       <p><b>Στα 41 ξαναδίνεις.</b></p>
       <div class="card">
         <div class="small">ΚΩΔΙΚΟΣ ΛΟΥΚΕΤΟΥ</div>
-        <div class="code">7314</div>
+        <div class="code">236</div>
       </div>
+      <p>
+        Και για να μάθεις και κάτι από εμάς σήμερα: <b>ο κωδικός δεν είναι τυχαίος.</b><br><br>
+        Στην αριθμολογία, το <b>2</b> αφορά την φιλία, το <b>3</b> τη χαρά και το <b>6</b> την αγάπη & την οικογένεια. ❤️
+      </p>
       <p>
         Πάρε τώρα τα AirPods σου. 🎧<br><br>
         Και μην τα χρησιμοποιήσεις για να κάνεις ότι δεν ακούς όταν φωνάζω.<br><br>
@@ -596,7 +616,7 @@
       btn.onclick = () => { overlay.classList.remove('show'); if (onClick) onClick(); };
       overlay.classList.add('show');
     }
-    function go(n) { screens.forEach(s => s.classList.remove('active')); document.getElementById('s' + n).classList.add('active'); const p = Math.min(n, 5); document.getElementById('stepLabel').textContent = `${p}/5`; document.getElementById('bar').style.width = (p / 5 * 100) + '%'; if (n === 3) startDrinks(); }
+    function go(n) { screens.forEach(s => s.classList.remove('active')); document.getElementById('s' + n).classList.add('active'); const p = Math.min(n, 6); document.getElementById('stepLabel').textContent = `${p}/6`; document.getElementById('bar').style.width = (p / 6 * 100) + '%'; if (n === 3) startDrinks(); }
     let truthSelected = [];
     function toggleTruth(btn, index) {
       if (btn.disabled) return;
@@ -694,13 +714,21 @@
       window.drinkInt = setInterval(() => { t--; document.getElementById('drinkTimer').textContent = t; if (t <= 0) { clearInterval(window.drinkInt);[...grid.children].forEach(x => x.style.pointerEvents = 'none'); showModal('bad', 'Ο ΧΡΟΝΟΣ ΤΕΛΕΙΩΣΕ.', '⏱️ Ο Φόρεστ αρνείται να πιστέψει ότι εσύ δεν βρήκες τα τσίπουρα.', 'ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ', startDrinks) } }, 1000);
     }
 
+    function checkObservation(correct) {
+      if (correct) {
+        showModal('ok','ΣΩΣΤΑ. 👀','Τα 40 και το τσιγάρο δεν έχουν επηρεάσει την παρατηρητικότητά σου.<br><br><b>Χαλάλι που τα πνευμονάκια μου ίσως να είναι μαύρα.</b><br><br>— Φόρεστ 🐥','ΕΠΟΜΕΝΟ',()=>go(5));
+      } else {
+        showModal('bad','ΠΩΩΩ…','Τσάμπα έχουν γίνει μαύρα τα πνευμόνια μου.<br><br><b>Ούτε τι καπνίζεις δεν ξέρεις.</b><br><br>— Φόρεστ 🐥','ΞΑΝΑΠΡΟΣΠΑΘΗΣΕ');
+      }
+    }
+
     function visionComplete() {
       showModal(
         'ok',
         'ΟΦΘΑΛΜΟΛΟΓΙΚΟΣ ΕΛΕΓΧΟΣ: ΟΛΟΚΛΗΡΩΘΗΚΕ',
         'Όραση: <b>συζητήσιμη.</b><br>Άρνηση της ηλικίας: <b>εξαιρετική.</b><br><br>Θα σε ξαναεξετάσω στα 41.<br><br>— Φόρεστ 🐥',
         'ΕΠΟΜΕΝΟ',
-        () => go(5)
+        () => go(6)
       );
     }
 
@@ -714,12 +742,12 @@
       }
     }
     function forestCorrect(btn) {
-      document.querySelectorAll('#s5 .choice').forEach(b => b.disabled = true);
+      document.querySelectorAll('#s6 .choice').forEach(b => b.disabled = true);
       btn.classList.add('correct');
       showModal('ok', 'ΣΩΣΤΑ.', 'Ο Φόρεστ εγκρίνει την απάντηση. 🐥', 'ΔΕΣ ΤΟΝ ΚΩΔΙΚΟ', finishGame);
     }
     function finishGame() {
-      go(6); document.getElementById('bar').style.width = '100%'; document.getElementById('stepLabel').textContent = '5/5'; const c = document.getElementById('confetti'); for (let i = 0; i < 35; i++) {
+      go(7); document.getElementById('bar').style.width = '100%'; document.getElementById('stepLabel').textContent = '6/6'; const c = document.getElementById('confetti'); for (let i = 0; i < 35; i++) {
         const s = document.createElement('span'); s.textContent = ['🎉', '✨', '🍻', '🐥'][Math.floor(Math.random() * 4)]; s.style.left = Math.random() * 100 + '%'; s.style.animationDelay = Math.random() * .8 + 's'; c.appendChild(s)
         s.addEventListener('animationend', () => {
           s.remove();
